@@ -6,13 +6,13 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/01/30 10:11:41 by rpet          ########   odam.nl          #
+#    Updated: 2020/02/05 15:26:36 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = cub3D
+NAME = cub3d
 CC = gcc
-SRCS = main.c
+SRCS = main.c render_frame.c hook_functions.c
 OBJS = $(SRCS:.c=.o)
 MLXDYL = libmlx.dylib
 MLXDIR = mlx/
@@ -25,10 +25,11 @@ all: $(NAME)
 		$(CC) $(FLAGS) -Imlx -c $< -o $@
 
 $(MLXDYL):
-		cd $(MLXDIR) && make && mv $(MLXDYL) ..
+		cd $(MLXDIR) && make && cp $(MLXDYL) ..
 
 $(NAME): $(MLXDYL) $(OBJS)
 		$(CC) -L. -lmlx -framework OpenGL -framework AppKit -o $(NAME) $(OBJS)
+
 
 clean:
 		rm -f $(OBJS)
@@ -41,3 +42,5 @@ fclean: clean
 re: fclean all
 
 bonus: $(NAME)
+
+

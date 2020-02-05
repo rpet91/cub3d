@@ -6,19 +6,87 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/01/30 18:06:54 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/05 15:45:28 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <mlx.h>
 #include "cub3d.h"
 #include <stdlib.h>
-#include <stdio.h> //norm
+#include <math.h>
 
-# define MAX_X 600
-# define MAX_Y 600
+# define MAX_X 800
+# define MAX_Y 800
 
-void	my_mlx_pixel_put(t_image *img, int x, int y, int color)
+#define tex_width 64
+#define tex_height 64
+#define map_width 24
+#define map_height 24
+
+int worldmap[map_width][map_height]=
+{
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
+  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+};
+
+int		move_player(t_data *mlx)
+{
+	int		sign;
+
+	mlx->move.move_speed = 0.08; //nog niet juist
+	mlx->move.rot_speed = 0.05; //nog niet juist
+	if (mlx->move.w == 1 || mlx->move.s == 1)
+	{
+		sign = (mlx->move.w == 1) ? 1 : -1;
+		sign *= (mlx->move.w == mlx->move.s) ? 0 : 1;
+		if (!worldmap[(int)mlx->pos.pos_y][(int)(mlx->pos.pos_x +
+					mlx->pos.dir_x * mlx->move.move_speed * sign)])
+			mlx->pos.pos_x += (mlx->pos.dir_x * mlx->move.move_speed * sign);
+		if (!worldmap[(int)(mlx->pos.pos_y + mlx->pos.dir_y *
+					mlx->move.move_speed * sign)][(int)mlx->pos.pos_x])
+			mlx->pos.pos_y += (mlx->pos.dir_y * mlx->move.move_speed * sign);
+	}
+	if (mlx->move.right == 1 || mlx->move.left == 1)
+	{
+		mlx->move.rot_speed *= (mlx->move.right == 1) ? 1 : -1;
+		mlx->move.rot_speed *= (mlx->move.right == mlx->move.left) ? 0 : 1;
+		mlx->pos.old_dir_x = mlx->pos.dir_x;
+		mlx->pos.dir_x = mlx->pos.dir_x * cos(mlx->move.rot_speed) -
+			mlx->pos.dir_y * sin(mlx->move.rot_speed);
+		mlx->pos.dir_y = mlx->pos.old_dir_x * sin(mlx->move.rot_speed) +
+			mlx->pos.dir_y * cos(mlx->move.rot_speed);
+		mlx->pos.old_plane_x = mlx->pos.plane_x;
+		mlx->pos.plane_x = mlx->pos.plane_x * cos(mlx->move.rot_speed) -
+			mlx->pos.plane_y * sin(mlx->move.rot_speed);
+		mlx->pos.plane_y = mlx->pos.old_plane_x * sin(mlx->move.rot_speed) +
+			mlx->pos.plane_y * cos(mlx->move.rot_speed);
+	}
+	return (0);
+}
+
+void	put_pixel(t_image *img, int x, int y, int color)
 {
 	char	*dst;
 
@@ -26,134 +94,67 @@ void	my_mlx_pixel_put(t_image *img, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-void	create_image(t_data *mlx)
+int		draw_image(t_data *mlx, int x)
 {
-	int		x;
 	int		y;
-	int		radius;
-	double	color1;
-	double	color2;
-	double	color3;
-
-	x = 0;
+	
 	y = 0;
-	radius = 50;
-	color1 = 0x00000000;
-	color2 = 0x0000FF00;
-	color3 = 0;
+	while (y < mlx->pos.draw_start)
+	{
+		if (mlx->active_img == 1)
+			put_pixel(&mlx->img1, x, y, 0x002C2C50);
+		else
+			put_pixel(&mlx->img2, x, y, 0x002C2C50);
+		y++;
+	}
+	while (y <= mlx->pos.draw_end)
+	{
+		if (mlx->active_img == 1)
+			put_pixel(&mlx->img1, x, y, mlx->color);
+		else
+			put_pixel(&mlx->img2, x, y, mlx->color);
+		y++;
+	}
 	while (y < MAX_Y)
 	{
-		while (x < MAX_X)
-		{
-			my_mlx_pixel_put(mlx->img, x, y, 0);
-			x++;
-		}
-		x = 0;
+		if (mlx->active_img == 1)
+			put_pixel(&mlx->img1, x, y, 0x00FFEBB2);
+		else
+			put_pixel(&mlx->img2, x, y, 0x00FFEBB2);
 		y++;
 	}
-	x = -radius;
-	y = -radius;
-	while (y <= radius)
-	{
-		while (x <= radius)
-		{
-			if (x*x + y*y < radius*radius+radius)
-			{
-				color3 = (color1 + color2 * (double)y / (double)(2*radius));
-				my_mlx_pixel_put(mlx->img, mlx->x + (50 - x), mlx->y + (50 + y), color3);
-				my_mlx_pixel_put(mlx->img, mlx->x + (50 + x), mlx->y + (50 - y), color3);
-			}
-			x++;
-		}
-		x = -radius;
-		y++;
-	}
-}
-
-int		close_window(t_data *mlx)
-{
-	mlx_destroy_window(mlx->mlx, mlx->mlx_win);
-	exit (0);
 	return (0);
 }
 
-int		key_press(int keycode, t_data *mlx)
+int		mlx_setup(t_data *mlx)
 {
-	printf("%i\n", keycode);
-	if (keycode == ESC_BUTTON)
-		close_window(mlx);
-	if (keycode == KEY_W)
-		mlx->move->w = 1;
-	if (keycode == KEY_S)
-		mlx->move->s = 1;
-	if (keycode == KEY_A)
-		mlx->move->a = 1;
-	if (keycode == KEY_D)
-		mlx->move->d = 1;
-	return (0);
-}
-
-int		key_release(int keycode, t_data *mlx)
-{
-	if (keycode == KEY_W)
-		mlx->move->w = 0;
-	if (keycode == KEY_S)
-		mlx->move->s = 0;
-	if (keycode == KEY_A)
-		mlx->move->a = 0;
-	if (keycode == KEY_D)
-		mlx->move->d = 0;
-	return (0);
-}
-
-int		render_frame(t_data *mlx)
-{
-	if (mlx->move->w == 1)
-		mlx->y -= (mlx->y - 10 >= 0) ? 10 : mlx->y;
-	if (mlx->move->s == 1)
-		mlx->y += (mlx->y + 10 <= 500) ? 10 : 500 - mlx->y;
-	if (mlx->move->a == 1)
-		mlx->x -= (mlx->x - 10 >= 0) ? 10 : mlx->x;
-	if (mlx->move->d == 1)
-		mlx->x += (mlx->x + 10 <= 500) ? 10 : 500 - mlx->x;
-	if (mlx->move->w == 1 || mlx->move->s == 1 || mlx->move->a == 1 ||
-			mlx->move->d == 1)
-	{
-		create_image(mlx);
-		mlx_put_image_to_window(mlx->mlx, mlx->mlx_win, mlx->img->img, 0, 0);
-	}
-	return (0);
-}
-
-int		mouse_trace(int x, int y)
-{
-	if (x >= 0 && x <= MAX_X && y >= 0 && y <= MAX_Y)
-		printf("[%i] - [%i]\n", x, y);
+	mlx->mlx = mlx_init();
+	mlx->win = mlx_new_window(mlx->mlx, MAX_X, MAX_Y, "Scherm");
+	mlx->img1.img = mlx_new_image(mlx->mlx, MAX_X, MAX_Y);
+	mlx->img2.img = mlx_new_image(mlx->mlx, MAX_X, MAX_Y);
+	mlx->img1.addr = mlx_get_data_addr(mlx->img1.img,
+		&mlx->img1.bits_per_pixel, &mlx->img1.line_length, &mlx->img1.endian);
+	mlx->img2.addr = mlx_get_data_addr(mlx->img2.img,
+		&mlx->img2.bits_per_pixel, &mlx->img2.line_length, &mlx->img2.endian);
+	mlx->active_img = 1;
+	mlx->pos.pos_x = 22;
+	mlx->pos.pos_y = 12;
+	mlx->pos.dir_x = -1;
+	mlx->pos.dir_y = 0;
+	mlx->pos.plane_x = 0;
+	mlx->pos.plane_y = -0.66;
 	return (0);
 }
 
 int		main(void)
 {
-	t_move		move;
-	t_image		img;
 	t_data		mlx;
 
-	mlx.mlx = mlx_init();
-	mlx.mlx_win = mlx_new_window(mlx.mlx, MAX_X, MAX_Y, "rpet's game");
-	img.img = mlx_new_image(mlx.mlx, MAX_X, MAX_Y);
-	mlx.img = &img;
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-			&img.endian);
-	mlx.x = 0;
-	mlx.y = 0;
-	mlx.move = &move;
-	create_image(&mlx);
-	mlx_put_image_to_window(mlx.mlx, mlx.mlx_win, img.img, 0, 0);
-	mlx_hook(mlx.mlx_win, 2, 1L<<0, key_press, &mlx);
-	mlx_hook(mlx.mlx_win, 3, 1L<<1, key_release, &mlx);
-	mlx_hook(mlx.mlx_win, 6, 1L<<6, mouse_trace, &mlx);
-	mlx_hook(mlx.mlx_win, 17, 1L<<17, close_window, &mlx);
-	mlx_loop_hook(mlx.mlx, render_frame, &mlx);
+	mlx_setup(&mlx);
+	mlx_hook(mlx.win, 2, 0, key_press, &mlx);
+	mlx_hook(mlx.win, 3, 1L<<1, key_release, &mlx);
+	mlx_hook(mlx.win, 17, 1L<<17, close_window, &mlx);
+	mlx_loop_hook(mlx.mlx, frame_loop, &mlx);
 	mlx_loop(mlx.mlx);
 	return (0);
 }
