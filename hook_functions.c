@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 15:25:20 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/05 15:45:30 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/18 13:19:45 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 int		close_window(t_data *mlx)
 {
+	free_array(mlx->map.map);
 	mlx_destroy_window(mlx->mlx, mlx->win);
 	exit(0);
 	return (0);

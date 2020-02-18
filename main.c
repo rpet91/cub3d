@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/05 15:45:28 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/17 11:49:45 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "cub3d.h"
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 
 # define MAX_X 800
 # define MAX_Y 800
@@ -86,52 +87,18 @@ int		move_player(t_data *mlx)
 	return (0);
 }
 
-void	put_pixel(t_image *img, int x, int y, int color)
-{
-	char	*dst;
-
-	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
-}
-
-int		draw_image(t_data *mlx, int x)
-{
-	int		y;
-	
-	y = 0;
-	while (y < mlx->pos.draw_start)
-	{
-		if (mlx->active_img == 1)
-			put_pixel(&mlx->img1, x, y, 0x002C2C50);
-		else
-			put_pixel(&mlx->img2, x, y, 0x002C2C50);
-		y++;
-	}
-	while (y <= mlx->pos.draw_end)
-	{
-		if (mlx->active_img == 1)
-			put_pixel(&mlx->img1, x, y, mlx->color);
-		else
-			put_pixel(&mlx->img2, x, y, mlx->color);
-		y++;
-	}
-	while (y < MAX_Y)
-	{
-		if (mlx->active_img == 1)
-			put_pixel(&mlx->img1, x, y, 0x00FFEBB2);
-		else
-			put_pixel(&mlx->img2, x, y, 0x00FFEBB2);
-		y++;
-	}
-	return (0);
-}
-
 int		mlx_setup(t_data *mlx)
 {
 	mlx->mlx = mlx_init();
+	if (mlx->mlx == NULL)
+		return (-1);
 	mlx->win = mlx_new_window(mlx->mlx, MAX_X, MAX_Y, "Scherm");
+	if (mlx->win == NULL)
+		return (-1);
 	mlx->img1.img = mlx_new_image(mlx->mlx, MAX_X, MAX_Y);
 	mlx->img2.img = mlx_new_image(mlx->mlx, MAX_X, MAX_Y);
+	if (mlx->img1.img == NULL || mlx->img2.img == NULL)
+		return (-1);
 	mlx->img1.addr = mlx_get_data_addr(mlx->img1.img,
 		&mlx->img1.bits_per_pixel, &mlx->img1.line_length, &mlx->img1.endian);
 	mlx->img2.addr = mlx_get_data_addr(mlx->img2.img,
@@ -146,14 +113,25 @@ int		mlx_setup(t_data *mlx)
 	return (0);
 }
 
-int		main(void)
+int		main(int argc, char **argv)
 {
 	t_data		mlx;
+	t_map		map;
+	int			error;
 
-	mlx_setup(&mlx);
+	if (argc <= 0)
+		return (0);
+	error = parse_map(&map, argv[1]);
+	if (error == -1)
+		error_handling("Invalid map.");
+	error = mlx_setup(&mlx);
+	if (error == -1)
+		error_handling("Something went wrong during the setup.");
+	mlx.map = map;
 	mlx_hook(mlx.win, 2, 0, key_press, &mlx);
 	mlx_hook(mlx.win, 3, 1L<<1, key_release, &mlx);
 	mlx_hook(mlx.win, 17, 1L<<17, close_window, &mlx);
+	mlx_do_key_autorepeatoff(mlx.mlx);
 	mlx_loop_hook(mlx.mlx, frame_loop, &mlx);
 	mlx_loop(mlx.mlx);
 	return (0);

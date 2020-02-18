@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 13:49:46 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/05 15:09:11 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/11 08:11:32 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,15 +84,15 @@ int		frame_loop(t_data *mlx)
 		if (mlx->pos.draw_end >= MAX_Y)
 			mlx->pos.draw_end = MAX_Y - 1;
 		if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 1)
-			mlx->color = 0x00FF0000; //red
+			mlx->color = 0xFF0000; //red
 		else if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 2)
-			mlx->color = 0x0000FF00; //green
+			mlx->color = 0x00FF00; //green
 		else if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 3)
-			mlx->color = 0x000000FF; //blue
+			mlx->color = 0x0000FF; //blue
 		else if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 4)
-			mlx->color = 0x00FFFFFF; //white
+			mlx->color = 0xF00FFF; //yellow
 		else
-			mlx->color = 0x00FF00FF; //yellow
+			mlx->color = 0xFF00FF; //white
 		if (mlx->pos.side == 1)
 			mlx->color /= 2;
 		draw_image(mlx, x);
