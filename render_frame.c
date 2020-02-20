@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 13:49:46 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/11 08:11:32 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/20 13:51:01 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,81 +19,83 @@ int		frame_loop(t_data *mlx)
 	int		x;
 
 	x = 0;
-	while (x < MAX_X)
+	while (x < mlx->map.res.x)
 	{
-		mlx->ray.cam_x = 2 * x / (double)MAX_X - 1;
-		mlx->ray.raydir_x = mlx->pos.dir_x + mlx->pos.plane_x * mlx->ray.cam_x;
-		mlx->ray.raydir_y = mlx->pos.dir_y + mlx->pos.plane_y * mlx->ray.cam_x;
-		mlx->pos.map_x = (int)mlx->pos.pos_x;
-		mlx->pos.map_y = (int)mlx->pos.pos_y;
-		mlx->ray.deltadist_x = fabs(1 / mlx->ray.raydir_x);
-		mlx->ray.deltadist_y = fabs(1 / mlx->ray.raydir_y);
-		mlx->pos.hit = 0;
-		if (mlx->ray.raydir_x < 0)
+		mlx->ray.cam_x = 2 * x / (double)mlx->map.res.x - 1;
+		mlx->ray.ray.x = mlx->ray.dir.x + mlx->ray.plane.x * mlx->ray.cam_x;
+		mlx->ray.ray.y = mlx->ray.dir.y + mlx->ray.plane.y * mlx->ray.cam_x;
+		mlx->ray.map.x = (int)mlx->ray.pos.x;
+		mlx->ray.map.y = (int)mlx->ray.pos.y;
+		mlx->ray.delta.x = fabs(1 / mlx->ray.ray.x);
+		mlx->ray.delta.y = fabs(1 / mlx->ray.ray.y);
+		mlx->ray.hit = 0;
+		if (mlx->ray.ray.x < 0)
 		{
-			mlx->move.step_x = -1;
-			mlx->ray.sidedist_x = (mlx->pos.pos_x - mlx->pos.map_x) *
-				mlx->ray.deltadist_x;
+			mlx->move.step.x = -1;
+			mlx->ray.side.x = (mlx->ray.pos.x - mlx->ray.map.x) *
+				mlx->ray.delta.x;
 		}
 		else
 		{
-			mlx->move.step_x = 1;
-			mlx->ray.sidedist_x = (mlx->pos.map_x + 1.0 - mlx->pos.pos_x) *
-				mlx->ray.deltadist_x;
+			mlx->move.step.x = 1;
+			mlx->ray.side.x = (mlx->ray.map.x + 1.0 - mlx->ray.pos.x) *
+				mlx->ray.delta.x;
 		}
-		if (mlx->ray.raydir_y < 0)
+		if (mlx->ray.ray.y < 0)
 		{
-			mlx->move.step_y = -1;
-			mlx->ray.sidedist_y = (mlx->pos.pos_y - mlx->pos.map_y) *
-				mlx->ray.deltadist_y;
+			mlx->move.step.y = -1;
+			mlx->ray.side.y = (mlx->ray.pos.y - mlx->ray.map.y) *
+				mlx->ray.delta.y;
 		}
 		else
 		{
-			mlx->move.step_y = 1;
-			mlx->ray.sidedist_y = (mlx->pos.map_y + 1.0 - mlx->pos.pos_y) *
-				mlx->ray.deltadist_y;
+			mlx->move.step.y = 1;
+			mlx->ray.side.y = (mlx->ray.map.y + 1.0 - mlx->ray.pos.y) *
+				mlx->ray.delta.y;
 		}
-		while (mlx->pos.hit == 0)
+		while (mlx->ray.hit == 0)
 		{
-			if (mlx->ray.sidedist_x < mlx->ray.sidedist_y)
+			if (mlx->ray.side.x < mlx->ray.side.y)
 			{
-				mlx->ray.sidedist_x += mlx->ray.deltadist_x;
-				mlx->pos.map_x += mlx->move.step_x;
-				mlx->pos.side = 0;
+				mlx->ray.side.x += mlx->ray.delta.x;
+				mlx->ray.map.x += mlx->move.step.x;
+				mlx->ray.part = 0;
 			}
 			else
 			{
-				mlx->ray.sidedist_y += mlx->ray.deltadist_y;
-				mlx->pos.map_y += mlx->move.step_y;
-				mlx->pos.side = 1;
+				mlx->ray.side.y += mlx->ray.delta.y;
+				mlx->ray.map.y += mlx->move.step.y;
+				mlx->ray.part = 1;
 			}
-			if (worldmap[mlx->pos.map_y][mlx->pos.map_x] > 0)
-				mlx->pos.hit = 1;
+		//	if (mlx->map.map[mlx->pos.map_y][mlx->pos.map_x] > 0)
+			if (worldmap[mlx->ray.map.y][mlx->ray.map.x] > 0)
+				mlx->ray.hit = 1;
 		}
-		if (mlx->pos.side == 0)
-			mlx->ray.perpwalldist = (mlx->pos.map_x - mlx->pos.pos_x +
-					(1 - mlx->move.step_x) / 2) / mlx->ray.raydir_x;
+		if (mlx->ray.part == 0)
+			mlx->ray.perpwalldist = (mlx->ray.map.x - mlx->ray.pos.x +
+					(1 - mlx->move.step.x) / 2) / mlx->ray.ray.x;
 		else
-			mlx->ray.perpwalldist =	(mlx->pos.map_y - mlx->pos.pos_y +
-					(1 - mlx->move.step_y) / 2) / mlx->ray.raydir_y;
-		mlx->pos.line_height = (int)(MAX_Y / mlx->ray.perpwalldist);
-		mlx->pos.draw_start = -mlx->pos.line_height / 2 + MAX_Y / 2;
-		if (mlx->pos.draw_start < 0)
-			mlx->pos.draw_start = 0;
-		mlx->pos.draw_end = mlx->pos.line_height / 2 + MAX_Y / 2;
-		if (mlx->pos.draw_end >= MAX_Y)
-			mlx->pos.draw_end = MAX_Y - 1;
-		if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 1)
+			mlx->ray.perpwalldist =	(mlx->ray.map.y - mlx->ray.pos.y +
+					(1 - mlx->move.step.y) / 2) / mlx->ray.ray.y;
+		mlx->ray.line_height = (int)(mlx->map.res.y / mlx->ray.perpwalldist);
+		mlx->ray.draw_start = -mlx->ray.line_height / 2 + mlx->map.res.y / 2;
+		if (mlx->ray.draw_start < 0)
+			mlx->ray.draw_start = 0;
+		mlx->ray.draw_end = mlx->ray.line_height / 2 + mlx->map.res.y / 2;
+		if (mlx->ray.draw_end >= mlx->map.res.y)
+			mlx->ray.draw_end = mlx->map.res.y - 1;
+	//	if (mlx->map.map[mlx->pos.map_y][mlx->pos.map_x] == 1)
+		if (worldmap[mlx->ray.map.y][mlx->ray.map.x] == 1)
 			mlx->color = 0xFF0000; //red
-		else if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 2)
+		else if (worldmap[mlx->ray.map.y][mlx->ray.map.x] == 2)
 			mlx->color = 0x00FF00; //green
-		else if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 3)
+		else if (worldmap[mlx->ray.map.y][mlx->ray.map.x] == 3)
 			mlx->color = 0x0000FF; //blue
-		else if (worldmap[mlx->pos.map_y][mlx->pos.map_x] == 4)
+		else if (worldmap[mlx->ray.map.y][mlx->ray.map.x] == 4)
 			mlx->color = 0xF00FFF; //yellow
 		else
 			mlx->color = 0xFF00FF; //white
-		if (mlx->pos.side == 1)
+		if (mlx->ray.part == 1)
 			mlx->color /= 2;
 		draw_image(mlx, x);
 		x++;

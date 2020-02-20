@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/18 14:08:02 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/20 13:32:22 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define MAX_RESOLUTION_X 2560
-# define MAX_RESOLUTION_Y 1440
+# define MAX_RESOLUTION_X 2560 //mlx function
+# define MAX_RESOLUTION_Y 1440 //mlx function
 # define BUFF_SIZE 128
 # define COLOR_R 0x00FF0000
 # define COLOR_G 0x0000FF00
@@ -29,42 +29,52 @@
 # define KEY_LEFT 123
 # define KEY_RIGHT 124
 
-# define MAX_X 800
-# define MAX_Y 800
+# define MALLOC "Something went wrong with allocating memory."
+# define MLX_ERROR "Something went wrong with the mlx setup."
+# define NO_CUB "No valid map file given. A .cub file is needed."
+# define READ_ERROR "Something went wrong while reading the file."
+# define OPEN_MAP "Invalid map. Map is not surrounded by walls."
+# define INVALID_CHAR "Found an invalid character in the cub file."
+# define NO_INFO "Didn't receive enough map info."
+# define WRONG_INFO "Received wrong info in one or more elements."
+# define WRONG_COLOR "Invalid color information." 
+# define WRONG_TEXTURE "Invalid texture location/file."
+# define WRONG_RES_SIZE "Given resolution is too small."
+# define WRONG_PLAYER_POS "Received zero or more than one starting coords."
 
 #define tex_width 64
 #define tex_height 64
 #define map_width 24
 #define map_height 24
 
-typedef struct	s_ray {
-	double		cam_x;
-	double		raydir_x;
-	double		raydir_y;
-	double		sidedist_x;
-	double		sidedist_y;
-	double		deltadist_x;
-	double		deltadist_y;
-	double		perpwalldist;
-}				t_ray;
+typedef struct	s_vector_d {
+	double		x;
+	double		y;
+}				t_vector_d;
 
-typedef struct	s_pos {
-	int			map_x;
-	int			map_y;
-	double		pos_x;
-	double		pos_y;
-	double		dir_x;
-	double		dir_y;
-	double		plane_x;
-	double		plane_y;
-	double		old_dir_x;
-	double		old_plane_x;
+typedef struct	s_vector_i {
+	int			x;
+	int			y;
+}				t_vector_i;
+
+typedef struct	s_ray {
 	int			hit;
-	int			side;
+	int			part;
 	int			line_height;
 	int			draw_start;
 	int			draw_end;
-}				t_pos;
+	double		cam_x;
+	double		perpwalldist;
+	double		old_dir_x;
+	double		old_plane_x;
+	t_vector_i	map;
+	t_vector_d	ray;
+	t_vector_d	side;
+	t_vector_d	delta;
+	t_vector_d	pos;
+	t_vector_d	dir;
+	t_vector_d	plane;
+}				t_ray;
 
 typedef struct	s_move {
 	int			w;
@@ -73,10 +83,9 @@ typedef struct	s_move {
 	int			d;
 	int			left;
 	int			right;
-	int			step_x;
-	int			step_y;
 	double		move_speed;
 	double		rot_speed;
+	t_vector_i	step;
 }				t_move;
 
 typedef struct	s_image {
@@ -87,14 +96,10 @@ typedef struct	s_image {
 	int			endian;
 }				t_image;
 
-typedef struct	s_vector	{
-	int			x;
-	int			y;
-}				t_vector;
-
-typedef struct	s_map	{
-	t_vector	player_coords;
-	t_vector	resolution;
+typedef struct	s_map {
+	t_vector_i	player;
+	t_vector_i	res;
+	t_vector_i	size;
 	char		*north_tex;
 	char		*south_tex;
 	char		*west_tex;
@@ -106,13 +111,12 @@ typedef struct	s_map	{
 	char		**map;
 }				t_map;
 
-typedef struct	s_data	{
+typedef struct	s_data {
 	void		*mlx;
 	void		*win;
 	t_image		img1;
 	t_image		img2;
 	t_move		move;
-	t_pos		pos;
 	t_ray		ray;
 	t_map		map;
 	int			active_img;
@@ -156,19 +160,20 @@ int				map_read_color(int *rgb, char *line, char *loc, int check);
 int				map_read_texture(char **wall, char *line, char *loc, int check);
 
 void			create_empty_map(t_map *map);
-char			**add_line_to_map(char **old_map, char *new_line);
-char			*remove_spaces(char *str);
+char			**add_line_to_map(char **old_map, char *new_line, int y);
+char			*remove_spaces(t_map *map, char *str);
 int				map_information(t_map *map, char *line);
 
-char			**copy_original_map(t_map *map);
-int				flood_fill(t_map *map);
+int				check_closed_map(t_map *map, char **copy_map, int y, int x);
+void			fill_copy_map(t_map *map, char **copy);
+int				create_copy_map(t_map *map, int max_y, int max_x);
 int				check_valid_map(t_map *map);
 
 /*
 **		Error handler
 */
 
-void			error_handling(char *str);
+int				error_handling(char *str);
 
 /*
 **		Free functions

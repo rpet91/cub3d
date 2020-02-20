@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 08:09:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/11 12:24:05 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/20 13:51:22 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int		draw_image(t_data *mlx, int x)
 	int		y;
 
 	y = 0;
-	while (y < mlx->pos.draw_start)
+	while (y < mlx->ray.draw_start)
 	{
 		if (mlx->active_img == 1)
 			put_pixel(&mlx->img1, x, y, mlx->map.ceiling_rgb);
@@ -33,7 +33,7 @@ int		draw_image(t_data *mlx, int x)
 			put_pixel(&mlx->img2, x, y, mlx->map.ceiling_rgb);
 		y++;
 	}
-	while (y <= mlx->pos.draw_end)
+	while (y <= mlx->ray.draw_end)
 	{
 		if (mlx->active_img == 1)
 			put_pixel(&mlx->img1, x, y, mlx->color);
@@ -41,7 +41,7 @@ int		draw_image(t_data *mlx, int x)
 			put_pixel(&mlx->img2, x, y, mlx->color);
 		y++;
 	}
-	while (y < MAX_Y)
+	while (y < mlx->map.res.y)
 	{
 		if (mlx->active_img == 1)
 			put_pixel(&mlx->img1, x, y, mlx->map.floor_rgb);

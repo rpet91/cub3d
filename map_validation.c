@@ -6,76 +6,124 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/18 11:02:54 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/18 15:39:05 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/20 09:09:15 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "cub3d.h"
 
-char	**copy_original_map(t_map *map)
-{
-	char	**result;
-	int		i;
+/*
+**		Flood fills in 8 directions to check if the map is surrounded by walls.
+*/
 
-	i = 0;
-	while (map->map[i])
-		i++;
-	result = malloc(sizeof(char *) * (i + 1));
-	if (result == NULL)
-		return (NULL);
-	result[i] = NULL;
+int		check_closed_map(t_map *map, char **copy_map, int y, int x)
+{
+	if (y < 0 || y >= map->size.y || x < 0 || x >= map->size.x)
+		return (error_handling(OPEN_MAP));
+	if (copy_map[y][x] == 'x' || copy_map[y][x] == '1')
+		return (1);
+	copy_map[y][x] = 'x';
+	if (check_closed_map(map, copy_map, y, x - 1) == -1)
+		return (error_handling(OPEN_MAP));
+	if (check_closed_map(map, copy_map, y, x + 1) == -1)
+		return (error_handling(OPEN_MAP));
+	if (check_closed_map(map, copy_map, y - 1, x) == -1)
+		return (error_handling(OPEN_MAP));
+	if (check_closed_map(map, copy_map, y + 1, x) == -1)
+		return (error_handling(OPEN_MAP));
+	if (check_closed_map(map, copy_map, y - 1, x - 1) == -1)
+		return (error_handling(OPEN_MAP));
+	if (check_closed_map(map, copy_map, y - 1, x + 1) == -1)
+		return (error_handling(OPEN_MAP));
+	if (check_closed_map(map, copy_map, y + 1, x - 1) == -1)
+		return (error_handling(OPEN_MAP));
+	if (check_closed_map(map, copy_map, y + 1, x + 1) == -1)
+		return (error_handling(OPEN_MAP));
+	return (1);
+}
+
+/*
+**		Fills the copy map.
+*/
+
+void	fill_copy_map(t_map *map, char **copy)
+{
+	int		y;
+	int		x;
+
+	y = 0;
+	while (map->map[y])
+	{
+		x = 0;
+		while (x < map->size.x)
+		{
+			copy[y][x] = (ft_strlen(map->map[y]) > x) ? map->map[y][x] : '0';
+			x++;
+		}
+		y++;
+	}
+	copy[map->player.y][map->player.x] = '0';
+}
+
+/*
+**		Creates a copy of the original map.
+*/
+
+int		create_copy_map(t_map *map, int max_y, int max_x)
+{
+	char	**copy;
+	int		i;
+	int		closed;
+
+	copy = malloc(sizeof(char *) * (max_y));
+	if (copy == NULL)
+		return (error_handling(MALLOC));
+	copy[max_y] = NULL;
 	i = 0;
 	while (map->map[i])
 	{
-		result[i] = ft_strdup(map->map[i]);
-		if (result[i] == NULL)
+		copy[i] = malloc(sizeof(char) * (max_x));
+		if (copy[i] == NULL)
 		{
-			free_array(result);
-			return (NULL);
+			free_array(copy);
+			return (error_handling(MALLOC));
 		}
+		copy[i][max_x] = '\0';
 		i++;
 	}
-	return (result);
+	fill_copy_map(map, copy);
+	closed = check_closed_map(map, copy, map->player.y, map->player.x);
+	free(copy);
+	return (closed);
 }
 
-int		flood_fill(t_map *map)
-{
-	char	**copy_map;
-
-	copy_map = copy_original_map(map);
-	if (copy_map == NULL)
-		return (-1);
-	return (1);
-}
+/*
+**		Checks for invalid characters in the map.
+*/
 
 int		check_valid_map(t_map *map)
 {
 	int		x;
 	int		y;
-	int		start_position;
+	int		check_multiple_players;
 
 	y = 0;
-	start_position = 0;
+	check_multiple_players = 0;
 	while (map->map[y])
 	{
 		x = 0;
-		while (map->map[y][x] && start_position <= 1)
+		while (map->map[y][x] && check_multiple_players <= 1)
 		{
 			if (ft_strchr("NSEW", map->map[y][x]) == 1)
-			{
-				map->player_coords.x = x;
-				map->player_coords.y = y;
-				start_position++;
-			}
-			else if (map->map[y][x] != '0' && map->map[y][x] != '1' &&
-					map->map[y][x] != '2')
-				return (-1);
+				check_multiple_players++;
+			else if (map->map[y][x] < '0' || map->map[y][x] > '2')
+				return (error_handling(INVALID_CHAR));
 			x++;
 		}
 		y++;
 	}
-	if (start_position != 1)
-		return (-1);
-	return (flood_fill(map));
+	if (check_multiple_players != 1)
+		return (error_handling(WRONG_PLAYER_POS));
+	return (create_copy_map(map, map->size.y, map->size.x));
 }

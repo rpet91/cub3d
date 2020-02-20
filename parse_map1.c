@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 11:05:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/18 15:39:06 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/20 09:48:20 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ int		check_valid_info(t_map *map, char *line)
 {
 	if (*line == '\0')
 		return (end_of_line(map));
+	if (*line == ' ' || *(line + ft_strlen(line) - 1) == ' ')
+		return (error_handling(INVALID_CHAR));
 	else if (*line == 'R')
 		return (map_resolution(map, line));
 	else if (*line == 'F')
@@ -39,10 +41,10 @@ int		check_valid_info(t_map *map, char *line)
 		return (map_read_texture(&map->east_tex, line, "EA", map->check));
 	else if (*line == 'S' && *(line + 1) != 'O')
 		return (map_read_texture(&map->sprite_tex, line, "S", map->check));
-	if (map->resolution.x == 0 || map->resolution.y == 0 || map->floor_rgb == -1
+	if (map->res.x == 0 || map->res.y == 0 || map->floor_rgb == -1
 		|| map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
 		|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0)
-		return (-1);
+		return (error_handling(NO_INFO));
 	return (map_information(map, line));
 }
 
@@ -88,8 +90,7 @@ int		process_cub_info(t_map *map, char *str, char *line)
 	if (ft_strchr(line, '\n') == 1)
 		line = cut_line(line);
 	if (line == NULL)
-		return (-1);
-	map->resolution.x = map->resolution.x;
+		return (error_handling(MALLOC));
 	if (check_valid_info(map, line) == -1)
 	{
 		free(line);
@@ -118,10 +119,10 @@ int		read_cub_file(t_map *map, int fd)
 	int			ret;
 
 	if (read(fd, NULL, 0) == -1)
-		return (-1);
+		return (error_handling(READ_ERROR));
 	line = ft_strdup(str);
 	if (line == NULL)
-		return (-1);
+		return (error_handling(MALLOC));
 	ret = 1;
 	while (ret > 0 && ft_strchr(line, '\n') == 0)
 	{
@@ -129,12 +130,12 @@ int		read_cub_file(t_map *map, int fd)
 		if (ret == -1)
 		{
 			free(line);
-			return (-1);
+			return (error_handling(READ_ERROR));
 		}
 		str[ret] = '\0';
 		line = ft_strjoin(line, str);
 		if (line == NULL)
-			return (-1);
+			return (error_handling(MALLOC));
 	}
 	return (process_cub_info(map, str, line));
 }
@@ -149,24 +150,22 @@ int		parse_map(t_map *map, char *str)
 	int		ret;
 
 	if (str == NULL)
-		return (-1);
+		return (error_handling(NO_CUB));
 	if (ft_strncmp(str + ft_strlen(str) - 4, ".cub", 4) != 0)
-		return (-1);
+		return (error_handling(NO_CUB));
 	fd = open(str, O_RDONLY);
 	if (fd == -1)
-		return (-1);
+		return (error_handling(NO_CUB));
 	create_empty_map(map);
 	if (map->map == NULL)
-		return (-1);
+		return (error_handling(MALLOC));
 	ret = 1;
 	while (ret == 1)
 		ret = read_cub_file(map, fd);
-	printf("ret1: [%i]\n", ret);
+	close(fd);
 	if (ret == 0)
 		ret = check_valid_map(map);
 	if (ret == -1)
 		free_array(map->map);
-	close(fd);
-	printf("ret2: [%i]\n", ret);
 	return (ret);
 }

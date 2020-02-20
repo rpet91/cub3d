@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/11 15:31:37 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/18 14:54:26 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/20 09:49:20 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,12 @@
 
 void	create_empty_map(t_map *map)
 {
-	map->player_coords.x = -1;
-	map->player_coords.y = -1;
-	map->resolution.x = 0;
-	map->resolution.y = 0;
+	map->player.x = 0;
+	map->player.y = 0;
+	map->res.x = 0;
+	map->res.y = 0;
+	map->size.x = 0;
+	map->size.y = 0;
 	map->north_tex = 0;
 	map->south_tex = 0;
 	map->west_tex = 0;
@@ -38,18 +40,17 @@ void	create_empty_map(t_map *map)
 }
 
 /*
-**		Adds the new created line to the existing map.
+**		Adds the new line to the existing map.
 */
 
-char	**add_line_to_map(char **old_map, char *new_line)
+char	**add_line_to_map(char **old_map, char *new_line, int y)
 {
 	char	**new_map;
 	int		i;
 
-	i = 0;
-	while (old_map[i] != NULL)
-		i++;
-	new_map = malloc(sizeof(char *) * (i + 2));
+	new_map = malloc(sizeof(char *) * (y + 2));
+	if (new_map == NULL)
+		return (NULL);
 	i = 0;
 	while (old_map[i] != NULL)
 	{
@@ -66,7 +67,7 @@ char	**add_line_to_map(char **old_map, char *new_line)
 **		Erases the spaces from the given map line.
 */
 
-char	*remove_spaces(char *str)
+char	*remove_spaces(t_map *map, char *str)
 {
 	int		i;
 	int		j;
@@ -78,11 +79,15 @@ char	*remove_spaces(char *str)
 		if (str[i] != ' ')
 		{
 			str[j] = str[i];
+			if (ft_strchr("NSEW", str[j]) == 1)
+				map->player.x = j;
 			j++;
 		}
 		i++;
 	}
 	str[j] = '\0';
+	if (map->player.x == 0)
+		map->player.y++;
 	return (str);
 }
 
@@ -93,17 +98,26 @@ char	*remove_spaces(char *str)
 int		map_information(t_map *map, char *line)
 {
 	char	*new_line;
+	int		len;
 
 	if (map->check == 0)
 		map->check = 1;
-	new_line = ft_strdup(remove_spaces(line));
+	new_line = ft_strdup(remove_spaces(map, line));
 	if (new_line == NULL || map->check == 2)
 	{
-		free_array(map->map);
+	//	free_array(map->map);
 		if (new_line != NULL)
+		{
 			free(new_line);
-		return (-1);
+			return (error_handling(INVALID_CHAR));
+		}
+		return (error_handling(MALLOC));
 	}
-	map->map = add_line_to_map(map->map, new_line);
+	len = ft_strlen(new_line);
+	map->map = add_line_to_map(map->map, new_line, map->size.y);
+	if (map->map == NULL)
+		return (error_handling(MALLOC));
+	map->size.x = (len > map->size.x) ? len : map->size.x;
+	map->size.y++;
 	return (1);
 }
