@@ -6,18 +6,22 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/02/18 11:15:31 by rpet          ########   odam.nl          #
+#    Updated: 2020/02/24 08:11:59 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = gcc
-SRCS = main.c render_frame.c hook_functions.c draw_functions.c error_handling.c \
-	   parse_map1.c parse_map2.c parse_map3.c map_validation.c free_array.c 
+SRCS = main.c render_frame.c hook_functions.c draw_functions.c move_player.c \
+	   error_handling.c raycasting.c empty_struct.c free_array.c
+MAPSRCS = parse_map1.c parse_map2.c parse_map3.c map_validation.c
 UTILSSRCS = ft_putstr_fd.c ft_strlen.c ft_strchr.c ft_strjoin.c ft_strdup.c \
-			ft_strcpy.c ft_split.c ft_atoi.c ft_strncmp.c
+			ft_strcpy.c ft_split.c ft_atoi.c ft_strncmp.c ft_memcpy.c \
+			ft_memset.c
 OBJS = $(SRCS:.c=.o)
+MAPDIR = map_parsing/
 UTILSDIR = utils/
+MAPOBJS = $(addprefix $(MAPDIR),$(MAPSRCS:.c=.o))
 UTILSOBJS = $(addprefix $(UTILSDIR),$(UTILSSRCS:.c=.o))
 MLXDYL = libmlx.dylib
 MLXDIR = mlx/
@@ -35,8 +39,8 @@ all: $(NAME)
 $(MLXDYL):
 		cd $(MLXDIR) && make && cp $(MLXDYL) ..
 
-$(NAME): $(MLXDYL) $(OBJS) $(UTILSOBJS)
-		$(CC) -L. -lmlx $(FRAMEWORK) -o $(NAME) $(OBJS) $(UTILSOBJS)
+$(NAME): $(MLXDYL) $(OBJS) $(MAPOBJS) $(UTILSOBJS)
+		$(CC) -L. -lmlx $(FRAMEWORK) -o $(NAME) $(OBJS) $(MAPOBJS) $(UTILSOBJS)
 
 clean:
 		rm -f $(OBJS) $(UTILSOBJS)

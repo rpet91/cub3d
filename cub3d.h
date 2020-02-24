@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/20 13:32:22 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/24 17:12:40 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define MAX_RESOLUTION_X 2560 //mlx function
-# define MAX_RESOLUTION_Y 1440 //mlx function
 # define BUFF_SIZE 128
 # define COLOR_R 0x00FF0000
 # define COLOR_G 0x0000FF00
@@ -37,15 +35,10 @@
 # define INVALID_CHAR "Found an invalid character in the cub file."
 # define NO_INFO "Didn't receive enough map info."
 # define WRONG_INFO "Received wrong info in one or more elements."
-# define WRONG_COLOR "Invalid color information." 
+# define WRONG_COLOR "Invalid color information."
 # define WRONG_TEXTURE "Invalid texture location/file."
 # define WRONG_RES_SIZE "Given resolution is too small."
 # define WRONG_PLAYER_POS "Received zero or more than one starting coords."
-
-#define tex_width 64
-#define tex_height 64
-#define map_width 24
-#define map_height 24
 
 typedef struct	s_vector_d {
 	double		x;
@@ -59,19 +52,17 @@ typedef struct	s_vector_i {
 
 typedef struct	s_ray {
 	int			hit;
-	int			part;
+	int			side_hit;
 	int			line_height;
 	int			draw_start;
 	int			draw_end;
 	double		cam_x;
 	double		perpwalldist;
-	double		old_dir_x;
-	double		old_plane_x;
 	t_vector_i	map;
+	t_vector_i	step;
 	t_vector_d	ray;
 	t_vector_d	side;
 	t_vector_d	delta;
-	t_vector_d	pos;
 	t_vector_d	dir;
 	t_vector_d	plane;
 }				t_ray;
@@ -85,8 +76,14 @@ typedef struct	s_move {
 	int			right;
 	double		move_speed;
 	double		rot_speed;
-	t_vector_i	step;
+	t_vector_d	pos;
 }				t_move;
+
+typedef struct	s_texture {
+
+	int			width;
+	int			height;
+}				t_texture
 
 typedef struct	s_image {
 	void		*img;
@@ -114,6 +111,7 @@ typedef struct	s_map {
 typedef struct	s_data {
 	void		*mlx;
 	void		*win;
+	void		*texture;
 	t_image		img1;
 	t_image		img2;
 	t_move		move;
@@ -124,24 +122,54 @@ typedef struct	s_data {
 }				t_data;
 
 int				frame_loop(t_data *mlx);
-int				worldmap[map_width][map_height];
-int				move_player(t_data *mlx);
+
+/*
+**		The main setup of the game.
+*/
+
+void			starting_face_direction(t_data *mlx, int y, int x);
+void			get_correct_window_resolution(t_data *mlx);
 int				mlx_setup(t_data *mlx);
 
 /*
-**		Draw functions
+**		Draw functions.
 */
 
+void			*check_texture(t_data *mlx);
 void			put_pixel(t_image *img, int x, int y, int color);
 int				draw_image(t_data *mlx, int x);
 
 /*
-**		Hook functions
+**		Hook functions.
 */
 
 int				key_press(int keycode, t_data *mlx);
 int				key_release(int keycode, t_data *mlx);
 int				close_window(t_data *mlx);
+
+/*
+**		Struct functions.
+*/
+
+void			create_empty_map(t_map *map);
+
+/*
+**		Raycasting functions.
+*/
+
+void			check_draw(t_data *mlx);
+void			check_wall_hit(t_data *mlx);
+void			check_player_direction(t_data *mlx);
+void			calculate_variables(t_data *mlx, int x);
+
+/*
+**		Move functions
+*/
+
+void			move_forward_or_backward(t_data *mlx, double dir);
+void			strafe_player(t_data *mlx, double dir);
+void			rotate_player(t_data *mlx, double dir);
+void			move_player(t_data *mlx);
 
 /*
 **		Map functions
@@ -159,13 +187,12 @@ int				get_color(char *color_line);
 int				map_read_color(int *rgb, char *line, char *loc, int check);
 int				map_read_texture(char **wall, char *line, char *loc, int check);
 
-void			create_empty_map(t_map *map);
+char			**make_rectangle(t_map *map);
 char			**add_line_to_map(char **old_map, char *new_line, int y);
 char			*remove_spaces(t_map *map, char *str);
 int				map_information(t_map *map, char *line);
 
 int				check_closed_map(t_map *map, char **copy_map, int y, int x);
-void			fill_copy_map(t_map *map, char **copy);
 int				create_copy_map(t_map *map, int max_y, int max_x);
 int				check_valid_map(t_map *map);
 
@@ -194,5 +221,7 @@ void			ft_strcpy(char *dst, char *src);
 char			**ft_split(char const *s, char c);
 int				ft_atoi(const char *str);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
+void			*ft_memcpy(void *dst, const void *src, size_t n);
+void			*ft_memset(void *b, int c, size_t len);
 
 #endif
