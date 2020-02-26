@@ -6,12 +6,12 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/18 11:02:54 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/20 09:09:15 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/24 08:49:49 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "cub3d.h"
+#include "../cub3d.h"
 
 /*
 **		Flood fills in 8 directions to check if the map is surrounded by walls.
@@ -20,50 +20,27 @@
 int		check_closed_map(t_map *map, char **copy_map, int y, int x)
 {
 	if (y < 0 || y >= map->size.y || x < 0 || x >= map->size.x)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (copy_map[y][x] == 'x' || copy_map[y][x] == '1')
 		return (1);
 	copy_map[y][x] = 'x';
 	if (check_closed_map(map, copy_map, y, x - 1) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (check_closed_map(map, copy_map, y, x + 1) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (check_closed_map(map, copy_map, y - 1, x) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (check_closed_map(map, copy_map, y + 1, x) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (check_closed_map(map, copy_map, y - 1, x - 1) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (check_closed_map(map, copy_map, y - 1, x + 1) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (check_closed_map(map, copy_map, y + 1, x - 1) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	if (check_closed_map(map, copy_map, y + 1, x + 1) == -1)
-		return (error_handling(OPEN_MAP));
+		return (-1);
 	return (1);
-}
-
-/*
-**		Fills the copy map.
-*/
-
-void	fill_copy_map(t_map *map, char **copy)
-{
-	int		y;
-	int		x;
-
-	y = 0;
-	while (map->map[y])
-	{
-		x = 0;
-		while (x < map->size.x)
-		{
-			copy[y][x] = (ft_strlen(map->map[y]) > x) ? map->map[y][x] : '0';
-			x++;
-		}
-		y++;
-	}
-	copy[map->player.y][map->player.x] = '0';
 }
 
 /*
@@ -75,26 +52,42 @@ int		create_copy_map(t_map *map, int max_y, int max_x)
 	char	**copy;
 	int		i;
 	int		closed;
+	int		temp = 0; //weg
 
-	copy = malloc(sizeof(char *) * (max_y));
+	copy = malloc(sizeof(char *) * (max_y + 1));
 	if (copy == NULL)
 		return (error_handling(MALLOC));
-	copy[max_y] = NULL;
 	i = 0;
-	while (map->map[i])
+	while (map->map[i] != NULL)
 	{
-		copy[i] = malloc(sizeof(char) * (max_x));
+		copy[i] = malloc(sizeof(char) * (max_x + 1));
 		if (copy[i] == NULL)
 		{
 			free_array(copy);
 			return (error_handling(MALLOC));
 		}
+		ft_memcpy(copy[i], map->map[i], max_x);
 		copy[i][max_x] = '\0';
 		i++;
 	}
-	fill_copy_map(map, copy);
+	copy[max_y] = NULL;
+	copy[map->player.y][map->player.x] = '0';
+	while (copy[temp] != NULL)
+	{
+		printf("copy map v: [%s]\n", copy[temp]);
+		temp++;
+	}
 	closed = check_closed_map(map, copy, map->player.y, map->player.x);
+	temp = 0;
+	printf("\n");
+	while (copy[temp] != NULL)
+	{
+		printf("copy map n: [%s]\n", copy[temp]);
+		temp++;
+	}
 	free(copy);
+	if (closed == -1)
+		return (error_handling(OPEN_MAP));
 	return (closed);
 }
 

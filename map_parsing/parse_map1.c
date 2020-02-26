@@ -6,14 +6,14 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 11:05:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/20 09:48:20 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/25 11:22:43 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include "cub3d.h"
+#include "../cub3d.h"
 
 /*
 **		Checks, refers and processes the given line.
@@ -32,15 +32,15 @@ int		check_valid_info(t_map *map, char *line)
 	else if (*line == 'C')
 		return (map_read_color(&map->ceiling_rgb, line, "C", map->check));
 	else if (*line == 'N')
-		return (map_read_texture(&map->north_tex, line, "NO", map->check));
+		return (map_read_tex(&map->north_tex, line, "NO", map->check));
 	else if (*line == 'S' && *(line + 1) == 'O')
-		return (map_read_texture(&map->south_tex, line, "SO", map->check));
+		return (map_read_tex(&map->south_tex, line, "SO", map->check));
 	else if (*line == 'W')
-		return (map_read_texture(&map->west_tex, line, "WE", map->check));
+		return (map_read_tex(&map->west_tex, line, "WE", map->check));
 	else if (*line == 'E')
-		return (map_read_texture(&map->east_tex, line, "EA", map->check));
+		return (map_read_tex(&map->east_tex, line, "EA", map->check));
 	else if (*line == 'S' && *(line + 1) != 'O')
-		return (map_read_texture(&map->sprite_tex, line, "S", map->check));
+		return (map_read_tex(&map->sprite_tex, line, "S", map->check));
 	if (map->res.x == 0 || map->res.y == 0 || map->floor_rgb == -1
 		|| map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
 		|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0)
@@ -105,6 +105,9 @@ int		process_cub_info(t_map *map, char *str, char *line)
 		ft_strcpy(str, str + i + 1);
 		return (1);
 	}
+	map->map = make_rectangle(map);
+	if (map->map == NULL)
+		return (error_handling(MALLOC));
 	return (0);
 }
 

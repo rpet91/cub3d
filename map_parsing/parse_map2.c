@@ -6,12 +6,12 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/10 11:02:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/20 13:09:28 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/25 11:22:26 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
-#include "cub3d.h"
+#include "../cub3d.h"
 
 /*
 **		check == 0 there is no info found about the map yet.
@@ -47,10 +47,6 @@ int		map_resolution(t_map *map, char *line)
 	map->res.y = ft_atoi(resolution[2]);
 	if (map->res.x < 1 || map->res.y < 1)
 		return (error_handling(WRONG_RES_SIZE));
-	if (map->res.x > MAX_RESOLUTION_X)
-		map->res.x = MAX_RESOLUTION_X;
-	if (map->res.y > MAX_RESOLUTION_Y)
-		map->res.y = MAX_RESOLUTION_Y;
 	free_array(resolution);
 	return (1);
 }
@@ -119,7 +115,7 @@ int		map_read_color(int *rgb, char *line, char *loc, int check)
 **		Checks if there is a valid given texture string for the walls.
 */
 
-int		map_read_texture(char **wall, char *line, char *loc, int check)
+int		map_read_tex(char **wall, char *line, char *loc, int check)
 {
 	char	**text;
 
@@ -134,10 +130,14 @@ int		map_read_texture(char **wall, char *line, char *loc, int check)
 		return (error_handling(WRONG_INFO));
 	}
 	*wall = ft_strdup(text[1]);
+	printf("%s\n", *wall);
 	free_array(text);
 	if (*wall == NULL)
 		return (error_handling(MALLOC));
 	if (open(*wall, O_RDONLY) == -1)
+		return (error_handling(WRONG_TEXTURE));
+	if (ft_strncmp(*wall + ft_strlen(*wall) - 4, ".png", 4) != 0 &&
+		ft_strncmp(*wall + ft_strlen(*wall) - 4, ".xpm", 4) != 0)
 		return (error_handling(WRONG_TEXTURE));
 	return (1);
 }

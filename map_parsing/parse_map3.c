@@ -6,37 +6,37 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/11 15:31:37 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/20 09:49:20 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/24 08:47:20 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "cub3d.h"
+#include "../cub3d.h"
 
-/*
-**		Creates a new map with everything set to zero.
-*/
-
-void	create_empty_map(t_map *map)
+char	**make_rectangle(t_map *map)
 {
-	map->player.x = 0;
-	map->player.y = 0;
-	map->res.x = 0;
-	map->res.y = 0;
-	map->size.x = 0;
-	map->size.y = 0;
-	map->north_tex = 0;
-	map->south_tex = 0;
-	map->west_tex = 0;
-	map->east_tex = 0;
-	map->sprite_tex = 0;
-	map->floor_rgb = -1;
-	map->ceiling_rgb = -1;
-	map->check = 0;
-	map->map = malloc(sizeof(char *));
-	if (map->map == NULL)
-		return ;
-	map->map[0] = NULL;
+	char	*extended_line;
+	int		y;
+	int		old_len;
+
+	y = 0;
+	while (map->map[y] != NULL)
+	{
+		old_len = ft_strlen(map->map[y]);
+		if (old_len < map->size.x)
+		{
+			extended_line = malloc(sizeof(char) * (map->size.x + 1));
+			if (extended_line == NULL)
+				return (NULL);
+			ft_memcpy(extended_line, map->map[y], old_len);
+			ft_memset(extended_line + old_len, '0', map->size.x - old_len);
+			extended_line[map->size.x] = '\0';
+			free(map->map[y]);
+			map->map[y] = extended_line;
+		}
+		y++;
+	}
+	return (map->map);
 }
 
 /*
@@ -64,7 +64,7 @@ char	**add_line_to_map(char **old_map, char *new_line, int y)
 }
 
 /*
-**		Erases the spaces from the given map line.
+**		Erases the spaces from the given map line. Locates player position.
 */
 
 char	*remove_spaces(t_map *map, char *str)
@@ -105,7 +105,6 @@ int		map_information(t_map *map, char *line)
 	new_line = ft_strdup(remove_spaces(map, line));
 	if (new_line == NULL || map->check == 2)
 	{
-	//	free_array(map->map);
 		if (new_line != NULL)
 		{
 			free(new_line);
