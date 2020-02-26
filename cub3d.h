@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 09:27:19 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 17:57:17 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ typedef struct		s_map {
 	t_vector_i		player;
 	t_vector_i		res;
 	t_vector_i		size;
+	char			*line;
 	char			*north_tex;
 	char			*south_tex;
 	char			*west_tex;
@@ -152,6 +153,7 @@ typedef struct		s_map {
 	int				floor_rgb;
 	int				ceiling_rgb;
 	int				check;
+	int				fd;
 	char			**map;
 }					t_map;
 
@@ -185,7 +187,7 @@ int					frame_loop(t_data *mlx);
 
 void				starting_face_direction(t_data *mlx, int y, int x);
 void				get_correct_window_resolution(t_data *mlx);
-int					mlx_setup(t_data *mlx);
+void				mlx_setup(t_data *mlx);
 
 /*
 **		Texture functions.
@@ -193,6 +195,7 @@ int					mlx_setup(t_data *mlx);
 
 t_texture			*get_texture_path(t_data *mlx);
 void				calculate_texture(t_data *mlx);
+void				load_textures_from_map(t_data *mlx);
 t_texture			*select_texture_img(t_data *mlx, int i);
 int					texture_setup(t_data *mlx);
 
@@ -211,7 +214,7 @@ void				draw_image(t_data *mlx, int x, t_image *cur_img);
 
 int					key_press(int keycode, t_data *mlx);
 int					key_release(int keycode, t_data *mlx);
-int					close_window(t_data *mlx);
+int					close_game(t_data *mlx);
 
 /*
 **		Struct functions.
@@ -241,33 +244,34 @@ void				move_player(t_data *mlx);
 **		Map parsing functions.
 */
 
-int					check_valid_info(t_map *map, char *line);
-char				*cut_line(char *line);
-int					process_cub_info(t_map *map, char *str, char *line);
+void				check_valid_info(t_map *map, char *line);
+int					process_cub_info(t_map *map, char *str);
 int					read_cub_file(t_map *map, int fd);
-int					parse_map(t_map *map, char *str);
+void				parse_map(t_map *map, char *str);
 
-int					end_of_line(t_map *map);
-int					map_resolution(t_map *map, char *line);
+void				map_resolution(t_map *map, char *str);
 int					get_color(char *color_line);
-int					map_read_color(int *rgb, char *line, char *loc, int check);
-int					map_read_tex(char **wall, char *line, char *loc, int check);
+void				map_read_color(int *rgb, char *str, char *loc, t_map *map);
+void				map_read_tex(char **wall, char *str, char *loc, t_map *map);
 
+void				element_validation(t_map *map);
 char				**make_rectangle(t_map *map);
 char				**add_line_to_map(char **old_map, char *new_line, int y);
 char				*remove_spaces(t_map *map, char *str);
-int					map_information(t_map *map, char *line);
+void				map_information(t_map *map, char *line);
 
 int					check_closed_map(t_map *map, char **copy_map, int y, int x);
-int					create_copy_map(t_map *map, int max_y, int max_x);
-int					check_valid_map(t_map *map);
+void				create_copy_map(t_map *map, int max_y, int max_x);
+void				check_valid_map(t_map *map);
 
 /*
 **		Error and free functions.
 */
 
-int					error_handling(char *str);
 void				free_array(char **str);
+void				map_error_handling(char *str, t_map *map);
+void				destroy_textures(t_data *mlx);
+void				error_handling(char *str, t_data *mlx);
 
 /*
 **		Util functions.

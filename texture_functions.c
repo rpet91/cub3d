@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/25 08:09:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 09:22:46 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 17:48:13 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,36 +55,34 @@ void		calculate_texture(t_data *mlx)
 }
 
 /*
+**		Links the textures from the map with the list of textures.
+*/
+
+void		load_textures_from_map(t_data *mlx)
+{
+	mlx->list_tex.north.path = mlx->map.north_tex;
+	mlx->list_tex.south.path = mlx->map.south_tex;
+	mlx->list_tex.west.path = mlx->map.west_tex;
+	mlx->list_tex.east.path = mlx->map.east_tex;
+	mlx->list_tex.sprite.path = mlx->map.sprite_tex;
+}
+
+/*
 **		Loops through all the available textures.
 */
 
 t_texture	*select_texture_img(t_data *mlx, int i)
 {
 	if (i == 0)
-	{
-		mlx->list_tex.north.path =  mlx->map.north_tex;
 		return (&mlx->list_tex.north);
-	}
 	if (i == 1)
-	{
-		mlx->list_tex.south.path =  mlx->map.south_tex;
 		return (&mlx->list_tex.south);
-	}
 	if (i == 2)
-	{
-		mlx->list_tex.west.path =  mlx->map.west_tex;
 		return (&mlx->list_tex.west);
-	}
 	if (i == 3)
-	{
-		mlx->list_tex.east.path =  mlx->map.east_tex;
 		return (&mlx->list_tex.east);
-	}
 	else
-	{
-		mlx->list_tex.sprite.path =  mlx->map.sprite_tex;
 		return (&mlx->list_tex.sprite);
-	}
 }
 
 /*
@@ -99,6 +97,7 @@ int			texture_setup(t_data *mlx)
 
 	i = 0;
 	tex = &mlx->list_tex;
+	load_textures_from_map(mlx);
 	while (i < 5)
 	{
 		cur = select_texture_img(mlx, i);
@@ -109,7 +108,7 @@ int			texture_setup(t_data *mlx)
 			cur->img.img = mlx_xpm_file_to_image(mlx->mlx, cur->path, 
 					&cur->w, &cur->h);
 		if (cur->img.img == NULL)
-			return (error_handling(TEXTURE_ERROR));
+			error_handling(TEXTURE_ERROR, mlx);
 		cur->img.addr = mlx_get_data_addr(cur->img.img,
 			&cur->img.bits_per_pixel, &cur->img.line_length, &cur->img.endian);
 		i++;

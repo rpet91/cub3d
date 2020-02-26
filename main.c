@@ -6,13 +6,12 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 09:42:12 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 17:51:45 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <mlx.h>
 #include "cub3d.h"
-#include <stdlib.h>
 
 /*
 **		Locates what direction the player faces to and sets starting position.
@@ -59,49 +58,40 @@ void	get_correct_window_resolution(t_data *mlx)
 **		The basic setup of the game.
 */
 
-int		mlx_setup(t_data *mlx)
+void	mlx_setup(t_data *mlx)
 {
 	mlx->mlx = mlx_init();
 	if (mlx->mlx == NULL)
-		return (error_handling(MLX_ERROR));
+		error_handling(MLX_ERROR, mlx);
 	get_correct_window_resolution(mlx);
 	mlx->win = mlx_new_window(mlx->mlx, mlx->map.res.x, mlx->map.res.y, "GAME");
 	if (mlx->win == NULL)
-		return (error_handling(MLX_ERROR));
+		error_handling(MLX_ERROR, mlx);
 	mlx->img1.img = mlx_new_image(mlx->mlx, mlx->map.res.x, mlx->map.res.y);
 	mlx->img2.img = mlx_new_image(mlx->mlx, mlx->map.res.x, mlx->map.res.y);
 	if (mlx->img1.img == NULL || mlx->img2.img == NULL)
-		return (error_handling(MLX_ERROR));
+		error_handling(MLX_ERROR, mlx);
 	mlx->img1.addr = mlx_get_data_addr(mlx->img1.img,
 		&mlx->img1.bits_per_pixel, &mlx->img1.line_length, &mlx->img1.endian);
 	mlx->img2.addr = mlx_get_data_addr(mlx->img2.img,
 		&mlx->img2.bits_per_pixel, &mlx->img2.line_length, &mlx->img2.endian);
 	mlx->active_img = 1;
 	starting_face_direction(mlx, mlx->map.player.y, mlx->map.player.x);
-	return (0);
 }
 
 int		main(int argc, char **argv)
 {
 	t_data		mlx;
-	t_map		map;
-	int			error;
 
 	if (argc <= 0)
 		return (0);
-	error = parse_map(&map, argv[1]);
-	if (error == -1)
-		return (-1);
-	mlx.map = map;
-	error = mlx_setup(&mlx);
-	if (error == -1)
-		return (-1);
-	error = texture_setup(&mlx);
-	if (error == -1)
-		return (-1);
+	parse_map(&mlx.map, argv[1]);
+	mlx_setup(&mlx);
+	texture_setup(&mlx);
+	error_handling("KAAS", &mlx);
 	mlx_hook(mlx.win, 2, 0, key_press, &mlx);
 	mlx_hook(mlx.win, 3, 1L << 1, key_release, &mlx);
-	mlx_hook(mlx.win, 17, 1L << 17, close_window, &mlx);
+	mlx_hook(mlx.win, 17, 1L << 17, close_game, &mlx);
 	mlx_do_key_autorepeatoff(mlx.mlx);
 	mlx_loop_hook(mlx.mlx, frame_loop, &mlx);
 	mlx_loop(mlx.mlx);

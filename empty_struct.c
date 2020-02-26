@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/21 08:31:00 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/21 08:41:56 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 15:08:13 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	create_empty_map(t_map *map)
 	map->res.y = 0;
 	map->size.x = 0;
 	map->size.y = 0;
+	map->line = 0;
 	map->north_tex = 0;
 	map->south_tex = 0;
 	map->west_tex = 0;

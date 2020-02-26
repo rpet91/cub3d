@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 15:25:20 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/18 13:19:45 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 11:27:59 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 #include <stdlib.h>
 #include <mlx.h>
 
-int		close_window(t_data *mlx)
+int		close_game(t_data *mlx)
 {
 	free_array(mlx->map.map);
+	while (1);
 	mlx_destroy_window(mlx->mlx, mlx->win);
 	exit(0);
 	return (0);
@@ -26,7 +27,7 @@ int		key_press(int keycode, t_data *mlx)
 {
 	printf("%i\n", keycode);
 	if (keycode == ESC_BUTTON)
-		close_window(mlx);
+		close_game(mlx);
 	if (keycode == KEY_W)
 		mlx->move.w = 1;
 	if (keycode == KEY_S)

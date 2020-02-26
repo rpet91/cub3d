@@ -1,17 +1,13 @@
 R 750 750
 F 74,63,255
 C 200,200,252
+
 NO textures/bluestone.png
 SO textures/redbrick.png
 WE textures/colorstone.png
 EA textures/eagle.png
 
-
-
 S textures/pillar.png
-
-
-
 
 
 
