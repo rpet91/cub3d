@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/24 09:55:18 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 09:42:12 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,9 @@ int		main(int argc, char **argv)
 		return (-1);
 	mlx.map = map;
 	error = mlx_setup(&mlx);
+	if (error == -1)
+		return (-1);
+	error = texture_setup(&mlx);
 	if (error == -1)
 		return (-1);
 	mlx_hook(mlx.win, 2, 0, key_press, &mlx);

@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/21 16:52:56 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/24 14:44:40 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 09:31:28 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@ void	check_draw(t_data *mlx)
 	mlx->ray.draw_end = mlx->ray.line_height / 2 + mlx->map.res.y / 2;
 	if (mlx->ray.draw_end >= mlx->map.res.y)
 		mlx->ray.draw_end = mlx->map.res.y - 1;
-	if (mlx->ray.side_hit == 1)
-		mlx->ray.side_hit = (mlx->ray.dir.y < 0) ? 1 : 2;
-	else if (mlx->ray.side_hit == 3)
-		mlx->ray.side_hit = (mlx->ray.dir.x < 0) ? 3 : 4;
+	if (mlx->ray.side_hit == 0)
+		mlx->ray.side_hit = (mlx->ray.ray.x > 0) ? 0 : 2;
+	else
+		mlx->ray.side_hit = (mlx->ray.ray.y > 0) ? 1 : 3;
 }
 
 /*
@@ -42,21 +42,21 @@ void	check_wall_hit(t_data *mlx)
 	{
 		mlx->ray.side.x += mlx->ray.delta.x;
 		mlx->ray.map.x += mlx->ray.step.x;
-		mlx->ray.side_hit = 1;
+		mlx->ray.side_hit = 0;
 	}
 	else
 	{
 		mlx->ray.side.y += mlx->ray.delta.y;
 		mlx->ray.map.y += mlx->ray.step.y;
-		mlx->ray.side_hit = 3;
+		mlx->ray.side_hit = 1;
 	}
 	if (mlx->map.map[mlx->ray.map.y][mlx->ray.map.x] > '0')
 		mlx->ray.hit = 1;
-	if (mlx->ray.side_hit == 1)
+	if (mlx->ray.side_hit == 0)
 		mlx->ray.perpwalldist = (mlx->ray.map.x - mlx->move.pos.x +
 		(1 - mlx->ray.step.x) / 2) / mlx->ray.ray.x;
 	else
-		mlx->ray.perpwalldist =	(mlx->ray.map.y - mlx->move.pos.y +
+		mlx->ray.perpwalldist = (mlx->ray.map.y - mlx->move.pos.y +
 		(1 - mlx->ray.step.y) / 2) / mlx->ray.ray.y;
 }
 

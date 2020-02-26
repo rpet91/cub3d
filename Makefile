@@ -6,14 +6,15 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/02/24 08:11:59 by rpet          ########   odam.nl          #
+#    Updated: 2020/02/26 11:05:58 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = gcc
 SRCS = main.c render_frame.c hook_functions.c draw_functions.c move_player.c \
-	   error_handling.c raycasting.c empty_struct.c free_array.c
+	   error_handling.c raycasting.c empty_struct.c free_array.c \
+	   texture_functions.c
 MAPSRCS = parse_map1.c parse_map2.c parse_map3.c map_validation.c
 UTILSSRCS = ft_putstr_fd.c ft_strlen.c ft_strchr.c ft_strjoin.c ft_strdup.c \
 			ft_strcpy.c ft_split.c ft_atoi.c ft_strncmp.c ft_memcpy.c \
@@ -43,7 +44,7 @@ $(NAME): $(MLXDYL) $(OBJS) $(MAPOBJS) $(UTILSOBJS)
 		$(CC) -L. -lmlx $(FRAMEWORK) -o $(NAME) $(OBJS) $(MAPOBJS) $(UTILSOBJS)
 
 clean:
-		rm -f $(OBJS) $(UTILSOBJS)
+		rm -f $(OBJS) $(MAPOBJS) $(UTILSOBJS)
 		cd $(MLXDIR) && make clean
 		rm -f $(MLXDYL)
 

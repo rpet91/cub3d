@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 13:49:46 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/24 14:47:02 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/26 09:36:31 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,18 @@
 int		frame_loop(t_data *mlx)
 {
 	int		x;
+	t_image	*cur_img;
 
 	x = 0;
+	cur_img = (mlx->active_img) ? &mlx->img1 : &mlx->img2;
 	while (x < mlx->map.res.x)
 	{
 		calculate_variables(mlx, x);
-		if (mlx->map.map[mlx->ray.map.y][mlx->ray.map.x] == '1')
-			mlx->texture = check_texture(mlx); //0xFF0000; //red
-		else
-			mlx->color = 0xFFFF00;
-		draw_image(mlx, x);
+		calculate_texture(mlx);
+		draw_image(mlx, x, cur_img);
 		x++;
 	}
-	if (mlx->active_img == 1)
-		mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img1.img, 0, 0);
-	else
-		mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img2.img, 0, 0);
+	mlx_put_image_to_window(mlx->mlx, mlx->win, cur_img->img, 0, 0);
 	mlx->active_img = !mlx->active_img;
 	move_player(mlx);
 	return (0);
