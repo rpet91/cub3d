@@ -1,0 +1,80 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   sprite_setup.c                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rpet <marvin@codam.nl>                       +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2020/02/27 10:58:07 by rpet          #+#    #+#                 */
+/*   Updated: 2020/02/27 17:03:56 by rpet          ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <stdlib.h>
+#include "cub3d.h"
+
+t_sprite	**add_sprite_to_array(t_data *mlx, t_sprite *new_sprite)
+{
+	t_sprite	**sprites;
+	int			i;
+
+	sprites = malloc(sizeof(t_sprite *) * (mlx->list.amount + 1));
+	if (sprites == NULL)
+		error_handling(MALLOC, mlx);
+	i = 0;
+	while (i < mlx->list.amount)
+	{
+		sprites[i] = mlx->list.sprite[i];
+		i++;
+	}
+	sprites[i] = new_sprite;
+	free(mlx->list.sprite);
+	return (sprites);
+}
+
+t_sprite	*create_new_sprite(t_data *mlx, int y, int x)
+{
+	t_sprite	*new_sprite;
+
+	new_sprite = malloc(sizeof(t_sprite));
+	if (new_sprite == NULL)
+		error_handling(MALLOC, mlx);
+	new_sprite->coords.y = y + 0.5;
+	new_sprite->coords.x = x + 0.5;
+	new_sprite->texture = &mlx->list_tex.sprite;
+	return (new_sprite);
+}
+
+void		locate_sprites(t_data *mlx)
+{
+	t_sprite	*sprite;
+	int			y;
+	int			x;
+
+	y = 0;
+	while (mlx->map.map[y])
+	{
+		x = 0;
+		while (mlx->map.map[y][x])
+		{
+			if (mlx->map.map[y][x] == '2')
+			{
+				sprite = create_new_sprite(mlx, y, x);
+				mlx->list.sprite = add_sprite_to_array(mlx, sprite);
+				mlx->list.amount++;
+			}
+			x++;
+		}
+		y++;
+	}
+}
+
+void		sprite_setup(t_data *mlx)
+{
+	mlx->list.amount = 0;
+	mlx->list.sprite = malloc(sizeof(t_sprite *));
+	if (mlx->list.sprite == NULL)
+		error_handling(MALLOC, mlx);
+	mlx->list.sprite[0] = NULL;
+	locate_sprites(mlx);
+}

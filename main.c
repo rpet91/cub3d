@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 17:51:45 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 12:50:36 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	mlx_setup(t_data *mlx)
 		&mlx->img1.bits_per_pixel, &mlx->img1.line_length, &mlx->img1.endian);
 	mlx->img2.addr = mlx_get_data_addr(mlx->img2.img,
 		&mlx->img2.bits_per_pixel, &mlx->img2.line_length, &mlx->img2.endian);
-	mlx->active_img = 1;
+	//mlx->active_img = 1;
 	starting_face_direction(mlx, mlx->map.player.y, mlx->map.player.x);
 }
 
@@ -88,7 +88,7 @@ int		main(int argc, char **argv)
 	parse_map(&mlx.map, argv[1]);
 	mlx_setup(&mlx);
 	texture_setup(&mlx);
-	error_handling("KAAS", &mlx);
+	sprite_setup(&mlx);
 	mlx_hook(mlx.win, 2, 0, key_press, &mlx);
 	mlx_hook(mlx.win, 3, 1L << 1, key_release, &mlx);
 	mlx_hook(mlx.win, 17, 1L << 17, close_game, &mlx);

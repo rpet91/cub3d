@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/25 08:09:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 17:48:13 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 15:41:59 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void		calculate_texture(t_data *mlx)
 	t_texture	*cur_tex;
 	t_ray		*ray;
 
-	cur_tex	= get_texture_path(mlx);
+	cur_tex = get_texture_path(mlx);
 	ray = &mlx->ray;
 	if (ray->side_hit % 2 == 0)
 		mlx->ray_tex.wall_x = mlx->move.pos.y + ray->perpwalldist * ray->ray.y;
@@ -50,7 +50,7 @@ void		calculate_texture(t_data *mlx)
 		mlx->ray_tex.wall_x = 1 - mlx->ray_tex.wall_x;
 	mlx->ray_tex.tex.x = (int)(mlx->ray_tex.wall_x * (double)(cur_tex->w));
 	mlx->ray_tex.step = 1.0 * cur_tex->h / ray->line_height;
-	mlx->ray_tex.tex_pos = (ray->draw_start - mlx->map.res.y 
+	mlx->ray_tex.tex_pos = (ray->draw_start - mlx->map.res.y
 			/ 2 + ray->line_height / 2) * mlx->ray_tex.step;
 }
 
@@ -102,10 +102,10 @@ int			texture_setup(t_data *mlx)
 	{
 		cur = select_texture_img(mlx, i);
 		if (ft_strncmp(cur->path + ft_strlen(cur->path) - 4, ".png", 4) == 0)
-			cur->img.img = mlx_png_file_to_image(mlx->mlx, cur->path, 
+			cur->img.img = mlx_png_file_to_image(mlx->mlx, cur->path,
 					&cur->w, &cur->h);
 		else
-			cur->img.img = mlx_xpm_file_to_image(mlx->mlx, cur->path, 
+			cur->img.img = mlx_xpm_file_to_image(mlx->mlx, cur->path,
 					&cur->w, &cur->h);
 		if (cur->img.img == NULL)
 			error_handling(TEXTURE_ERROR, mlx);

@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/21 08:31:00 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 15:08:13 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 15:59:58 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,6 @@ void	create_empty_map(t_map *map)
 	map->check = 0;
 	map->map = malloc(sizeof(char *));
 	if (map->map == NULL)
-		return ;
+		map_error_handling(MALLOC, map);
 	map->map[0] = NULL;
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   error_handling.c                                   :+:    :+:            */
+/*   error_and_free_functions.c                         :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/26 18:01:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 18:12:43 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 13:42:10 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,37 @@ void	free_array(char **str)
 	str = NULL;
 }
 
+void	free_sprite_array(t_data *mlx)
+{
+	int			i;
+
+	i = 0;
+	while (i < mlx->list.amount)
+	{
+		free(mlx->list.sprite[i]);
+		mlx->list.sprite[i] = NULL;
+		i++;
+	}
+	if (mlx->list.sprite != NULL)
+		free(mlx->list.sprite);
+	mlx->list.sprite = NULL;
+}
+
+void	destroy_textures(t_data *mlx)
+{
+	int			i;
+	t_texture	*cur;
+
+	i = 0;
+	while (i < 5)
+	{
+		cur = select_texture_img(mlx, i);
+		if (cur->img.img != NULL)
+			mlx_destroy_image(mlx->mlx, cur->img.img);
+		i++;
+	}
+}
+
 void	map_error_handling(char *str, t_map *map)
 {
 	if (map->line != NULL)
@@ -51,24 +82,10 @@ void	map_error_handling(char *str, t_map *map)
 	exit(1);
 }
 
-void	destroy_textures(t_data *mlx)
-{
-	int			i;
-	t_texture	*cur;
-
-	i = 0;
-	while (i < 5)
-	{
-		cur = select_texture_img(mlx, i);
-		if (cur->img.img != NULL)
-			mlx_destroy_image(mlx->mlx, cur->img.img);
-		i++;
-	}
-}
-
 void	error_handling(char *str, t_data *mlx)
 {
 	destroy_textures(mlx);
+//	free_sprite_array(mlx);
 	if (mlx->img1.img != NULL)
 		mlx_destroy_image(mlx->mlx, mlx->img1.img);
 	if (mlx->img2.img != NULL)

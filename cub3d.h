@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 17:57:17 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 17:24:42 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ typedef struct		s_texture {
 	int				h;
 }					t_texture;
 
-
 /*
 **		Struct for a list of texture structs.
 */
@@ -124,6 +123,21 @@ typedef struct		s_list_tex {
 	t_texture		east;
 	t_texture		sprite;
 }					t_list_tex;
+
+typedef struct		s_sprite {
+	t_vector_d		coords;
+	t_texture		*texture;
+	double			dis;
+}					t_sprite;
+
+/*
+**		Struct for a list of sprites.
+*/
+
+typedef struct		s_list_sprite {
+	int				amount;
+	t_sprite		**sprite;
+}					t_list_sprite;
 
 /*
 **		Struct for texture raycasting calculations.
@@ -167,6 +181,7 @@ typedef struct		s_data {
 	t_image			img1;
 	t_image			img2;
 	t_list_tex		list_tex;
+	t_list_sprite	list;
 	t_move			move;
 	t_ray			ray;
 	t_ray_tex		ray_tex;
@@ -188,6 +203,18 @@ int					frame_loop(t_data *mlx);
 void				starting_face_direction(t_data *mlx, int y, int x);
 void				get_correct_window_resolution(t_data *mlx);
 void				mlx_setup(t_data *mlx);
+
+/*
+**		Sprite functions.
+*/
+
+void				calculate_distance(t_data *mlx);
+void				sprite_engine(t_data *mlx);
+
+t_sprite			**add_sprite_to_array(t_data *mlx, t_sprite *new_sprite);
+t_sprite			*create_new_sprite(t_data *mlx, int y, int x);
+void				locate_sprites(t_data *mlx);
+void				sprite_setup(t_data *mlx);
 
 /*
 **		Texture functions.
@@ -269,8 +296,9 @@ void				check_valid_map(t_map *map);
 */
 
 void				free_array(char **str);
-void				map_error_handling(char *str, t_map *map);
+void				free_sprite_array(t_data *mlx);
 void				destroy_textures(t_data *mlx);
+void				map_error_handling(char *str, t_map *map);
 void				error_handling(char *str, t_data *mlx);
 
 /*

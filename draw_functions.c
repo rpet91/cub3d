@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 08:09:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 09:34:53 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 15:43:26 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ unsigned int	get_pixel(t_image *img, int x, int y)
 **		Places pixels in the image.
 */
 
-void		put_pixel(t_image *img, int x, int y, int color)
+void			put_pixel(t_image *img, int x, int y, int color)
 {
 	char	*dst;
 
@@ -40,7 +40,7 @@ void		put_pixel(t_image *img, int x, int y, int color)
 **		Loops through the texture and draws every pixel.
 */
 
-void		draw_texture(t_data *mlx, int x, int y, t_image *cur_img)
+void			draw_texture(t_data *mlx, int x, int y, t_image *cur_img)
 {
 	unsigned int	rgb;
 	t_texture		*cur_tex;
@@ -65,7 +65,7 @@ void		draw_texture(t_data *mlx, int x, int y, t_image *cur_img)
 **		Main loop for drawing the image.
 */
 
-void		draw_image(t_data *mlx, int x, t_image *cur_img)
+void			draw_image(t_data *mlx, int x, t_image *cur_img)
 {
 	int		y;
 

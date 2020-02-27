@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 15:25:20 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 11:27:59 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 11:06:58 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,15 @@
 int		close_game(t_data *mlx)
 {
 	free_array(mlx->map.map);
-	while (1);
+	free(mlx->map.line);
+	free(mlx->map.north_tex);
+	free(mlx->map.south_tex);
+	free(mlx->map.west_tex);
+	free(mlx->map.east_tex);
+	free(mlx->map.sprite_tex);
+	destroy_textures(mlx);
+	mlx_destroy_image(mlx->mlx, mlx->img1.img);
+	mlx_destroy_image(mlx->mlx, mlx->img2.img);
 	mlx_destroy_window(mlx->mlx, mlx->win);
 	exit(0);
 	return (0);
@@ -25,7 +33,6 @@ int		close_game(t_data *mlx)
 
 int		key_press(int keycode, t_data *mlx)
 {
-	printf("%i\n", keycode);
 	if (keycode == ESC_BUTTON)
 		close_game(mlx);
 	if (keycode == KEY_W)

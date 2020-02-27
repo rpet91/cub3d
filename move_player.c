@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/21 11:31:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/21 16:47:26 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 07:58:16 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,10 @@ void	rotate_player(t_data *mlx, double dir)
 	plane->x = plane->x * cos(dir) - plane->y * sin(dir);
 	plane->y = old_plane_x * sin(dir) + plane->y * cos(dir);
 }
+
+/*
+**		Checks what direction the player will move to.
+*/
 
 void	move_player(t_data *mlx)
 {
