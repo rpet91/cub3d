@@ -6,12 +6,29 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/11 15:31:37 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/24 08:47:20 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 13:30:13 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "../cub3d.h"
+
+/*
+**		Checks if every map element received info.
+*/
+
+void	element_validation(t_map *map)
+{
+	if (map->res.x == 0 || map->res.y == 0 || map->floor_rgb == -1 ||
+			map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
+			|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0)
+		map_error_handling(NO_INFO, map);
+	map_information(map, map->line);
+}
+
+/*
+**		Makes a rectangle from the build map.
+*/
 
 char	**make_rectangle(t_map *map)
 {
@@ -50,7 +67,10 @@ char	**add_line_to_map(char **old_map, char *new_line, int y)
 
 	new_map = malloc(sizeof(char *) * (y + 2));
 	if (new_map == NULL)
+	{
+		free(new_line);
 		return (NULL);
+	}
 	i = 0;
 	while (old_map[i] != NULL)
 	{
@@ -95,7 +115,7 @@ char	*remove_spaces(t_map *map, char *str)
 **		Main function about creating the map.
 */
 
-int		map_information(t_map *map, char *line)
+void	map_information(t_map *map, char *line)
 {
 	char	*new_line;
 	int		len;
@@ -108,15 +128,14 @@ int		map_information(t_map *map, char *line)
 		if (new_line != NULL)
 		{
 			free(new_line);
-			return (error_handling(INVALID_CHAR));
+			map_error_handling(INVALID_CHAR, map);
 		}
-		return (error_handling(MALLOC));
+		map_error_handling(MALLOC, map);
 	}
 	len = ft_strlen(new_line);
 	map->map = add_line_to_map(map->map, new_line, map->size.y);
 	if (map->map == NULL)
-		return (error_handling(MALLOC));
+		map_error_handling(MALLOC, map);
 	map->size.x = (len > map->size.x) ? len : map->size.x;
 	map->size.y++;
-	return (1);
 }

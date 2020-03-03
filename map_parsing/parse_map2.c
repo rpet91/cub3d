@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/10 11:02:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/25 11:22:26 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/27 15:53:31 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,41 +14,29 @@
 #include "../cub3d.h"
 
 /*
-**		check == 0 there is no info found about the map yet.
-**		check == 1 it found all the info about the map.
-**		check == 2 it may not find other info than end of line.
-*/
-
-int		end_of_line(t_map *map)
-{
-	if (map->check == 1)
-		map->check = 2;
-	return (1);
-}
-
-/*
 **		Reads info about map size.
 */
 
-int		map_resolution(t_map *map, char *line)
+void	map_resolution(t_map *map, char *str)
 {
 	char	**resolution;
 
 	if (map->res.x != 0 || map->res.y != 0 || map->check != 0)
-		return (error_handling(WRONG_INFO));
-	resolution = ft_split(line, ' ');
+		map_error_handling(WRONG_INFO, map);
+	resolution = ft_split(str, ' ');
 	if (resolution == NULL)
-		return (error_handling(MALLOC));
-	if (ft_strncmp(resolution[0], "R", ft_strlen(resolution[0])) != 0)
-		return (error_handling(WRONG_INFO));
-	if (resolution[3] != NULL)
-		return (error_handling(WRONG_INFO));
+		map_error_handling(MALLOC, map);
+	if (ft_strncmp(resolution[0], "R", ft_strlen(resolution[0])) != 0
+			|| resolution[3] != NULL)
+	{
+		free_array(resolution);
+		map_error_handling(WRONG_INFO, map);
+	}
 	map->res.x = ft_atoi(resolution[1]);
 	map->res.y = ft_atoi(resolution[2]);
-	if (map->res.x < 1 || map->res.y < 1)
-		return (error_handling(WRONG_RES_SIZE));
 	free_array(resolution);
-	return (1);
+	if (map->res.x < 1 || map->res.y < 1)
+		map_error_handling(WRONG_RES_SIZE, map);
 }
 
 /*
@@ -87,57 +75,54 @@ int		get_color(char *color_line)
 **		Checks if there is a valid given color string for the ceiling/floor.
 */
 
-int		map_read_color(int *rgb, char *line, char *loc, int check)
+void	map_read_color(int *rgb, char *str, char *loc, t_map *map)
 {
 	char	**color;
 
-	if (*rgb != -1 || check != 0)
-		return (error_handling(WRONG_INFO));
-	color = ft_split(line, ' ');
+	if (*rgb != -1 || map->check != 0)
+		map_error_handling(WRONG_INFO, map);
+	color = ft_split(str, ' ');
 	if (color == NULL)
-		return (error_handling(MALLOC));
+		map_error_handling(MALLOC, map);
 	if (ft_strncmp(color[0], loc, ft_strlen(color[0])) != 0 || color[2] != NULL)
 	{
 		free_array(color);
-		return (error_handling(WRONG_INFO));
+		map_error_handling(WRONG_INFO, map);
 	}
 	*rgb = get_color(color[1]);
 	if (get_color(color[1]) == -1)
 	{
 		free_array(color);
-		return (error_handling(WRONG_COLOR));
+		map_error_handling(WRONG_COLOR, map);
 	}
 	free_array(color);
-	return (1);
 }
 
 /*
 **		Checks if there is a valid given texture string for the walls.
 */
 
-int		map_read_tex(char **wall, char *line, char *loc, int check)
+void	map_read_tex(char **wall, char *str, char *loc, t_map *map)
 {
 	char	**text;
 
-	if (*wall != 0 || check != 0)
-		return (error_handling(WRONG_INFO));
-	text = ft_split(line, ' ');
+	if (*wall != 0 || map->check != 0)
+		map_error_handling(WRONG_INFO, map);
+	text = ft_split(str, ' ');
 	if (text == NULL)
-		return (error_handling(MALLOC));
+		map_error_handling(MALLOC, map);
 	if (ft_strncmp(text[0], loc, ft_strlen(text[0])) != 0 || text[2] != NULL)
 	{
 		free_array(text);
-		return (error_handling(WRONG_INFO));
+		map_error_handling(WRONG_INFO, map);
 	}
 	*wall = ft_strdup(text[1]);
-	printf("%s\n", *wall);
 	free_array(text);
 	if (*wall == NULL)
-		return (error_handling(MALLOC));
+		map_error_handling(MALLOC, map);
 	if (open(*wall, O_RDONLY) == -1)
-		return (error_handling(WRONG_TEXTURE));
+		map_error_handling(WRONG_TEXTURE, map);
 	if (ft_strncmp(*wall + ft_strlen(*wall) - 4, ".png", 4) != 0 &&
 		ft_strncmp(*wall + ft_strlen(*wall) - 4, ".xpm", 4) != 0)
-		return (error_handling(WRONG_TEXTURE));
-	return (1);
+		map_error_handling(WRONG_TEXTURE, map);
 }
