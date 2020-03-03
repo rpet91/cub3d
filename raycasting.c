@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/21 16:52:56 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/02 16:16:33 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 08:10:42 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	check_wall_hit(t_data *mlx)
 		ray->map.y += ray->step.y;
 		ray->side_hit = 1;
 	}
-	if (mlx->map.map[ray->map.y][ray->map.x] > '0')
+	if (mlx->map.map[ray->map.y][ray->map.x] == '1')
 		ray->hit = 1;
 }
 

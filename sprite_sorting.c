@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/27 09:34:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/02 16:55:09 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 08:11:16 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,6 @@ void	sprite_engine(t_data *mlx, t_image *cur_img)
 		{
 			spr->tex.x = (int)(256 * (spr->draw.x - (-spr->size / 2 +
 						spr->screen)) * cur->texture.w / spr->size) / 256;
-			printf("trans y: [%f]\n", spr->transform.y);
-			printf("dis_buffer: [%f]\n", ray->dis_buffer[spr->draw.x]);
 			if (spr->transform.y > 0 &&
 					spr->transform.y < ray->dis_buffer[spr->draw.x])
 			{
@@ -123,9 +121,7 @@ void	sprite_engine(t_data *mlx, t_image *cur_img)
 				{
 					d = spr->draw.y*256-mlx->map.res.y * 128 + spr->size * 128;
 					spr->tex.y = ((d * cur->texture.h) / spr->size) / 256;
-					printf("spr->tex x: [%i] y: [%i]\n", spr->tex.x, spr->tex.y);
 					rgb = get_pixel(&cur->texture.img, spr->tex.x, spr->tex.y);
-					printf("rgb: [%u]\n", rgb);
 					if (rgb != 0)
 						put_pixel(cur_img, spr->draw.x, spr->draw.y, rgb);
 					spr->draw.y++;
