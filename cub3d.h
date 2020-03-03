@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/02 16:16:45 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 15:40:50 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # define KEY_LEFT 123
 # define KEY_RIGHT 124
 
+# define ARGUMENTS "Invalid amount of given arguments."
 # define MALLOC "Something went wrong with allocating memory."
 # define MLX_ERROR "Something went wrong with the mlx setup."
 # define TEXTURE_ERROR "Something went wrong with the texture setup."
@@ -64,6 +65,7 @@ typedef struct		s_draw_sprite {
 	t_vector_i		tex;
 	t_vector_i		draw;
 	double			inv_det;
+	unsigned int	rgb;
 	int				size;
 	int				screen;
 }					t_draw_sprite;
@@ -228,6 +230,8 @@ void				mlx_setup(t_data *mlx);
 
 void				sort_sprites(t_data *mlx);
 void				calculate_distances(t_data *mlx);
+void				calculate_sprite_size_on_screen(t_data *mlx);
+void				calculate_sprite_depth(t_data *mlx);
 void				sprite_engine(t_data *mlx, t_image *cur_img);
 
 t_sprite			**add_sprite_to_array(t_data *mlx, t_sprite *new_sprite);
@@ -243,7 +247,7 @@ t_texture			*get_texture_path(t_data *mlx);
 void				calculate_texture(t_data *mlx);
 void				load_textures_from_map(t_data *mlx);
 t_texture			*select_texture_img(t_data *mlx, int i);
-int					texture_setup(t_data *mlx);
+void				texture_setup(t_data *mlx);
 
 /*
 **		Draw functions.
@@ -252,7 +256,8 @@ int					texture_setup(t_data *mlx);
 unsigned int		get_pixel(t_image *img, int x, int y);
 void				put_pixel(t_image *img, int x, int y, int color);
 void				draw_texture(t_data *mlx, int x, int y, t_image *cur_img);
-void				draw_image(t_data *mlx, int x, t_image *cur_img);
+void				draw_main_image(t_data *mlx, int x, t_image *cur_img);
+void				draw_sprites(t_data *mlx, t_sprite *cur, t_image *cur_img);
 
 /*
 **		Hook functions.
@@ -261,12 +266,6 @@ void				draw_image(t_data *mlx, int x, t_image *cur_img);
 int					key_press(int keycode, t_data *mlx);
 int					key_release(int keycode, t_data *mlx);
 int					close_game(t_data *mlx);
-
-/*
-**		Struct functions.
-*/
-
-void				create_empty_map(t_map *map);
 
 /*
 **		Raycasting functions.
@@ -291,25 +290,32 @@ void				move_player(t_data *mlx);
 **		Map parsing functions.
 */
 
-void				check_valid_info(t_map *map, char *line);
-int					process_cub_info(t_map *map, char *str);
-int					read_cub_file(t_map *map, int fd);
-void				parse_map(t_map *map, char *str);
+void				check_valid_info(t_data *mlx, char *line);
+int					process_cub_info(t_data *mlx, char *str);
+int					read_cub_file(t_data *mlx, int fd);
+void				parse_map(t_data *mlx, char *str);
 
-void				map_resolution(t_map *map, char *str);
+void				map_resolution(t_data *mlx, char *str);
 int					get_color(char *color_line);
-void				map_read_color(int *rgb, char *str, char *loc, t_map *map);
-void				map_read_tex(char **wall, char *str, char *loc, t_map *map);
+void				read_color(int *rgb, char *str, char *loc, t_data *mlx);
+void				read_tex(char **wall, char *str, char *loc, t_data *mlx);
 
-void				element_validation(t_map *map);
-char				**make_rectangle(t_map *map);
+void				element_validation(t_data *mlx);
+char				**make_rectangle(t_data *mlx);
 char				**add_line_to_map(char **old_map, char *new_line, int y);
-char				*remove_spaces(t_map *map, char *str);
-void				map_information(t_map *map, char *line);
+char				*remove_spaces(t_data *mlx, char *str);
+void				map_information(t_data *mlx, char *line);
 
-int					check_closed_map(t_map *map, char **copy_map, int y, int x);
-void				create_copy_map(t_map *map, int max_y, int max_x);
-void				check_valid_map(t_map *map);
+int					check_closed(t_data *mlx, char **copy_map, int y, int x);
+void				create_copy_map(t_data *mlx, int max_y, int max_x);
+void				check_valid_map(t_data *mlx);
+
+/*
+**		Empty struct functions.
+*/
+
+void				empty_map(t_data *mlx);
+void				empty_mlx(t_data *mlx);
 
 /*
 **		Error and free functions.
@@ -318,7 +324,10 @@ void				check_valid_map(t_map *map);
 void				free_array(char **str);
 void				free_sprite_array(t_data *mlx);
 void				destroy_textures(t_data *mlx);
-void				map_error_handling(char *str, t_map *map);
+void				free_map(t_data *mlx);
+void				destroy_mlx(t_data *mlx);
+
+void				error_message(char *str);
 void				error_handling(char *str, t_data *mlx);
 
 /*

@@ -6,16 +6,16 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/03/03 09:27:45 by rpet          ########   odam.nl          #
+#    Updated: 2020/03/03 15:16:20 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = gcc
 _SRCS = main.c render_frame.c hook_functions.c draw_functions.c move_player.c \
-	   error_and_free_functions.c raycasting.c empty_struct.c \
-	   texture_functions.c sprite_setup.c sprite_sorting.c \
-	   parse_map1.c parse_map2.c parse_map3.c map_validation.c \
+	   raycasting.c free_functions.c error_functions.c texture_functions.c \
+	   sprite_setup.c sprite_sorting.c parse_map1.c parse_map2.c parse_map3.c \
+	   map_validation.c empty_struct_functions.c \
 	   ft_putstr_fd.c ft_strlen.c ft_strchr.c ft_strjoin.c ft_strdup.c \
 	   ft_strcpy.c ft_split.c ft_atoi.c ft_strncmp.c ft_memcpy.c ft_memset.c
 _OBJS := $(_SRCS:.c=.o)
@@ -34,6 +34,7 @@ FLAGS = -Wall -Werror -Wextra
 all: $(NAME)
 
 $(OBJSDIR)%.o: $(SRCSDIR)%.c $(HEADER)
+		mkdir -p objs
 		$(CC) $(FLAGS) -Imlx -c $< -o $@
 
 $(MLXDYL):
