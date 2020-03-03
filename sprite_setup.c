@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/27 10:58:07 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 17:03:56 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/02 11:35:34 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ t_sprite	**add_sprite_to_array(t_data *mlx, t_sprite *new_sprite)
 	i = 0;
 	while (i < mlx->list.amount)
 	{
-		sprites[i] = mlx->list.sprite[i];
+		sprites[i] = mlx->list.sprites[i];
 		i++;
 	}
 	sprites[i] = new_sprite;
-	free(mlx->list.sprite);
+	free(mlx->list.sprites);
 	return (sprites);
 }
 
@@ -41,7 +41,7 @@ t_sprite	*create_new_sprite(t_data *mlx, int y, int x)
 		error_handling(MALLOC, mlx);
 	new_sprite->coords.y = y + 0.5;
 	new_sprite->coords.x = x + 0.5;
-	new_sprite->texture = &mlx->list_tex.sprite;
+	new_sprite->texture = mlx->list_tex.sprite;
 	return (new_sprite);
 }
 
@@ -60,7 +60,7 @@ void		locate_sprites(t_data *mlx)
 			if (mlx->map.map[y][x] == '2')
 			{
 				sprite = create_new_sprite(mlx, y, x);
-				mlx->list.sprite = add_sprite_to_array(mlx, sprite);
+				mlx->list.sprites = add_sprite_to_array(mlx, sprite);
 				mlx->list.amount++;
 			}
 			x++;
@@ -72,9 +72,9 @@ void		locate_sprites(t_data *mlx)
 void		sprite_setup(t_data *mlx)
 {
 	mlx->list.amount = 0;
-	mlx->list.sprite = malloc(sizeof(t_sprite *));
-	if (mlx->list.sprite == NULL)
+	mlx->list.sprites = malloc(sizeof(t_sprite *));
+	if (mlx->list.sprites == NULL)
 		error_handling(MALLOC, mlx);
-	mlx->list.sprite[0] = NULL;
+	mlx->list.sprites[0] = NULL;
 	locate_sprites(mlx);
 }

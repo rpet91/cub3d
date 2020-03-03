@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 13:49:46 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 17:25:12 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/02 12:15:12 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ int		frame_loop(t_data *mlx)
 	{
 		calculate_variables(mlx, x);
 		calculate_texture(mlx);
-		sprite_engine(mlx);
 		draw_image(mlx, x, cur_img);
 		x++;
 	}
+	sprite_engine(mlx, cur_img);
 	mlx_put_image_to_window(mlx->mlx, mlx->win, cur_img->img, 0, 0);
 	mlx->active_img = !mlx->active_img;
 	move_player(mlx);

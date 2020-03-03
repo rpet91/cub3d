@@ -6,10 +6,11 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 12:50:36 by rpet          ########   odam.nl         */
+/*   Updated: 2020/02/28 16:40:04 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include <mlx.h>
 #include "cub3d.h"
 
@@ -33,8 +34,8 @@ void	starting_face_direction(t_data *mlx, int y, int x)
 		mlx->ray.dir.x = (mlx->map.map[y][x] == 'W') ? -1 : 1;
 		mlx->ray.plane.y = (mlx->map.map[y][x] == 'W') ? -0.66 : 0.66;
 	}
-	mlx->move.pos.y = y;
-	mlx->move.pos.x = x;
+	mlx->move.pos.y = y + 0.5;
+	mlx->move.pos.x = x + 0.5;
 	mlx->map.map[y][x] = '0';
 }
 
@@ -75,8 +76,10 @@ void	mlx_setup(t_data *mlx)
 		&mlx->img1.bits_per_pixel, &mlx->img1.line_length, &mlx->img1.endian);
 	mlx->img2.addr = mlx_get_data_addr(mlx->img2.img,
 		&mlx->img2.bits_per_pixel, &mlx->img2.line_length, &mlx->img2.endian);
-	//mlx->active_img = 1;
 	starting_face_direction(mlx, mlx->map.player.y, mlx->map.player.x);
+	mlx->ray.dis_buffer = malloc(sizeof(double) * (mlx->map.res.x));
+	if (mlx->ray.dis_buffer == NULL)
+		error_handling(MALLOC, mlx);
 }
 
 int		main(int argc, char **argv)

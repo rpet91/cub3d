@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 08:09:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 15:43:26 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/02 09:23:46 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ void			draw_texture(t_data *mlx, int x, int y, t_image *cur_img)
 		ray->tex_pos += ray->step;
 		if (mlx->map.map[mlx->ray.map.y][mlx->ray.map.x] == '1')
 			rgb = get_pixel(&cur_tex->img, ray->tex.x, ray->tex.y);
-		else
-			rgb = 0xFF0000; //sprites
+		//else
+		//	rgb = 0xFF0000; //sprites
 		put_pixel(cur_img, x, y, rgb);
 		y++;
 	}

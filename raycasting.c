@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/21 16:52:56 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/26 09:31:28 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/02 16:16:33 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,47 +17,65 @@
 **		Calculates the draw coordinates & which texture.
 */
 
-void	check_draw(t_data *mlx)
+void	check_draw_coords(t_data *mlx)
 {
-	mlx->ray.line_height = (int)(mlx->map.res.y / mlx->ray.perpwalldist);
-	mlx->ray.draw_start = -mlx->ray.line_height / 2 + mlx->map.res.y / 2;
-	if (mlx->ray.draw_start < 0)
-		mlx->ray.draw_start = 0;
-	mlx->ray.draw_end = mlx->ray.line_height / 2 + mlx->map.res.y / 2;
-	if (mlx->ray.draw_end >= mlx->map.res.y)
-		mlx->ray.draw_end = mlx->map.res.y - 1;
-	if (mlx->ray.side_hit == 0)
-		mlx->ray.side_hit = (mlx->ray.ray.x > 0) ? 0 : 2;
+	t_ray	*ray;
+
+	ray = &mlx->ray;
+	ray->line_height = (int)(mlx->map.res.y / ray->perpwalldist);
+	ray->draw_start = -ray->line_height / 2 + mlx->map.res.y / 2;
+	if (ray->draw_start < 0)
+		ray->draw_start = 0;
+	ray->draw_end = ray->line_height / 2 + mlx->map.res.y / 2;
+	if (ray->draw_end >= mlx->map.res.y)
+		ray->draw_end = mlx->map.res.y - 1;
+	if (ray->side_hit == 0)
+		ray->side_hit = (ray->ray.x > 0) ? 0 : 2;
 	else
-		mlx->ray.side_hit = (mlx->ray.ray.y > 0) ? 1 : 3;
+		ray->side_hit = (ray->ray.y > 0) ? 1 : 3;
 }
 
 /*
-**		Calculates distance to wall.
+**		Calculates the distance to a wall.
+*/
+
+void	calculate_wall_distance(t_data *mlx, int x)
+{
+	t_ray	*ray;
+
+	ray = &mlx->ray;
+	if (ray->side_hit == 0)
+		ray->perpwalldist = (ray->map.x - mlx->move.pos.x +
+		(1 - ray->step.x) / 2) / ray->ray.x;
+	else
+		ray->perpwalldist = (ray->map.y - mlx->move.pos.y +
+		(1 - ray->step.y) / 2) / ray->ray.y;
+	ray->dis_buffer[x] = ray->perpwalldist;
+}
+
+/*
+**		Calculates when a wall is hit.
 */
 
 void	check_wall_hit(t_data *mlx)
 {
-	if (mlx->ray.side.x < mlx->ray.side.y)
+	t_ray	*ray;
+
+	ray = &mlx->ray;
+	if (ray->side.x < ray->side.y)
 	{
-		mlx->ray.side.x += mlx->ray.delta.x;
-		mlx->ray.map.x += mlx->ray.step.x;
-		mlx->ray.side_hit = 0;
+		ray->side.x += ray->delta.x;
+		ray->map.x += ray->step.x;
+		ray->side_hit = 0;
 	}
 	else
 	{
-		mlx->ray.side.y += mlx->ray.delta.y;
-		mlx->ray.map.y += mlx->ray.step.y;
-		mlx->ray.side_hit = 1;
+		ray->side.y += ray->delta.y;
+		ray->map.y += ray->step.y;
+		ray->side_hit = 1;
 	}
-	if (mlx->map.map[mlx->ray.map.y][mlx->ray.map.x] > '0')
-		mlx->ray.hit = 1;
-	if (mlx->ray.side_hit == 0)
-		mlx->ray.perpwalldist = (mlx->ray.map.x - mlx->move.pos.x +
-		(1 - mlx->ray.step.x) / 2) / mlx->ray.ray.x;
-	else
-		mlx->ray.perpwalldist = (mlx->ray.map.y - mlx->move.pos.y +
-		(1 - mlx->ray.step.y) / 2) / mlx->ray.ray.y;
+	if (mlx->map.map[ray->map.y][ray->map.x] > '0')
+		ray->hit = 1;
 }
 
 /*
@@ -66,29 +84,28 @@ void	check_wall_hit(t_data *mlx)
 
 void	check_player_direction(t_data *mlx)
 {
-	if (mlx->ray.ray.x < 0)
+	t_ray	*ray;
+
+	ray = &mlx->ray;
+	if (ray->ray.x < 0)
 	{
-		mlx->ray.step.x = -1;
-		mlx->ray.side.x = (mlx->move.pos.x - mlx->ray.map.x) *
-			mlx->ray.delta.x;
+		ray->step.x = -1;
+		ray->side.x = (mlx->move.pos.x - ray->map.x) * ray->delta.x;
 	}
 	else
 	{
-		mlx->ray.step.x = 1;
-		mlx->ray.side.x = (mlx->ray.map.x + 1.0 - mlx->move.pos.x) *
-			mlx->ray.delta.x;
+		ray->step.x = 1;
+		ray->side.x = (ray->map.x + 1.0 - mlx->move.pos.x) * ray->delta.x;
 	}
-	if (mlx->ray.ray.y < 0)
+	if (ray->ray.y < 0)
 	{
-		mlx->ray.step.y = -1;
-		mlx->ray.side.y = (mlx->move.pos.y - mlx->ray.map.y) *
-			mlx->ray.delta.y;
+		ray->step.y = -1;
+		ray->side.y = (mlx->move.pos.y - ray->map.y) * ray->delta.y;
 	}
 	else
 	{
-		mlx->ray.step.y = 1;
-		mlx->ray.side.y = (mlx->ray.map.y + 1.0 - mlx->move.pos.y) *
-			mlx->ray.delta.y;
+		ray->step.y = 1;
+		ray->side.y = (ray->map.y + 1.0 - mlx->move.pos.y) * ray->delta.y;
 	}
 }
 
@@ -98,16 +115,20 @@ void	check_player_direction(t_data *mlx)
 
 void	calculate_variables(t_data *mlx, int x)
 {
-	mlx->ray.cam_x = 2 * x / (double)mlx->map.res.x - 1;
-	mlx->ray.ray.x = mlx->ray.dir.x + mlx->ray.plane.x * mlx->ray.cam_x;
-	mlx->ray.ray.y = mlx->ray.dir.y + mlx->ray.plane.y * mlx->ray.cam_x;
-	mlx->ray.map.x = (int)mlx->move.pos.x;
-	mlx->ray.map.y = (int)mlx->move.pos.y;
-	mlx->ray.delta.x = fabs(1 / mlx->ray.ray.x);
-	mlx->ray.delta.y = fabs(1 / mlx->ray.ray.y);
-	mlx->ray.hit = 0;
+	t_ray	*ray;
+
+	ray = &mlx->ray;
+	ray->cam_x = 2 * x / (double)mlx->map.res.x - 1;
+	ray->ray.x = ray->dir.x + ray->plane.x * ray->cam_x;
+	ray->ray.y = ray->dir.y + ray->plane.y * ray->cam_x;
+	ray->map.x = (int)mlx->move.pos.x;
+	ray->map.y = (int)mlx->move.pos.y;
+	ray->delta.x = fabs(1 / ray->ray.x);
+	ray->delta.y = fabs(1 / ray->ray.y);
+	ray->hit = 0;
 	check_player_direction(mlx);
 	while (mlx->ray.hit == 0)
 		check_wall_hit(mlx);
-	check_draw(mlx);
+	calculate_wall_distance(mlx, x);
+	check_draw_coords(mlx);
 }

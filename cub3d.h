@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 17:24:42 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/02 16:16:45 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,23 @@ typedef struct		s_vector_i {
 }					t_vector_i;
 
 /*
-**		Struct needed for the raycasting calculations.
+**		Struct for the sprite drawing calculations.
+*/
+
+typedef struct		s_draw_sprite {
+	t_vector_d		sprite;
+	t_vector_d		transform;
+	t_vector_i		draw_start;
+	t_vector_i		draw_end;
+	t_vector_i		tex;
+	t_vector_i		draw;
+	double			inv_det;
+	int				size;
+	int				screen;
+}					t_draw_sprite;
+
+/*
+**		Struct for the raycasting calculations.
 */
 
 typedef struct		s_ray {
@@ -64,6 +80,7 @@ typedef struct		s_ray {
 	int				draw_end;
 	double			cam_x;
 	double			perpwalldist;
+	double			*dis_buffer;
 	t_vector_i		map;
 	t_vector_i		step;
 	t_vector_d		ray;
@@ -126,7 +143,7 @@ typedef struct		s_list_tex {
 
 typedef struct		s_sprite {
 	t_vector_d		coords;
-	t_texture		*texture;
+	t_texture		texture;
 	double			dis;
 }					t_sprite;
 
@@ -136,7 +153,7 @@ typedef struct		s_sprite {
 
 typedef struct		s_list_sprite {
 	int				amount;
-	t_sprite		**sprite;
+	t_sprite		**sprites;
 }					t_list_sprite;
 
 /*
@@ -182,6 +199,7 @@ typedef struct		s_data {
 	t_image			img2;
 	t_list_tex		list_tex;
 	t_list_sprite	list;
+	t_draw_sprite	draw_sprite;
 	t_move			move;
 	t_ray			ray;
 	t_ray_tex		ray_tex;
@@ -208,8 +226,9 @@ void				mlx_setup(t_data *mlx);
 **		Sprite functions.
 */
 
-void				calculate_distance(t_data *mlx);
-void				sprite_engine(t_data *mlx);
+void				sort_sprites(t_data *mlx);
+void				calculate_distances(t_data *mlx);
+void				sprite_engine(t_data *mlx, t_image *cur_img);
 
 t_sprite			**add_sprite_to_array(t_data *mlx, t_sprite *new_sprite);
 t_sprite			*create_new_sprite(t_data *mlx, int y, int x);
@@ -253,7 +272,8 @@ void				create_empty_map(t_map *map);
 **		Raycasting functions.
 */
 
-void				check_draw(t_data *mlx);
+void				check_draw_coords(t_data *mlx);
+void				calculate_wall_distance(t_data *mlx, int x);
 void				check_wall_hit(t_data *mlx);
 void				check_player_direction(t_data *mlx);
 void				calculate_variables(t_data *mlx, int x);

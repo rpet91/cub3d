@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/26 18:01:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 13:42:10 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/02 11:09:31 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,13 @@ void	free_sprite_array(t_data *mlx)
 	i = 0;
 	while (i < mlx->list.amount)
 	{
-		free(mlx->list.sprite[i]);
-		mlx->list.sprite[i] = NULL;
+		free(mlx->list.sprites[i]);
+		mlx->list.sprites[i] = NULL;
 		i++;
 	}
-	if (mlx->list.sprite != NULL)
-		free(mlx->list.sprite);
-	mlx->list.sprite = NULL;
+	if (mlx->list.sprites != NULL)
+		free(mlx->list.sprites);
+	mlx->list.sprites = NULL;
 }
 
 void	destroy_textures(t_data *mlx)
