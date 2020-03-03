@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 09:17:52 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 15:35:14 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	get_correct_window_resolution(t_data *mlx)
 
 void	mlx_setup(t_data *mlx)
 {
+	empty_mlx(mlx);
 	mlx->mlx = mlx_init();
 	if (mlx->mlx == NULL)
 		error_handling(MLX_ERROR, mlx);
@@ -86,9 +87,9 @@ int		main(int argc, char **argv)
 {
 	t_data		mlx;
 
-	if (argc <= 0)
-		return (0);
-	parse_map(&mlx.map, argv[1]);
+	if (argc <= 1 || argc >= 4)
+		error_message(ARGUMENTS);
+	parse_map(&mlx, argv[1]);
 	mlx_setup(&mlx);
 	texture_setup(&mlx);
 	sprite_setup(&mlx);

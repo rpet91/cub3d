@@ -6,12 +6,16 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/27 10:58:07 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 10:49:37 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 15:48:21 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "../cub3d.h"
+
+/*
+**		Adds the new sprite to the array of sprites.
+*/
 
 t_sprite	**add_sprite_to_array(t_data *mlx, t_sprite *new_sprite)
 {
@@ -32,6 +36,10 @@ t_sprite	**add_sprite_to_array(t_data *mlx, t_sprite *new_sprite)
 	return (sprites);
 }
 
+/*
+**		Creates a new sprite and saves the exact coords.
+*/
+
 t_sprite	*create_new_sprite(t_data *mlx, int y, int x)
 {
 	t_sprite	*new_sprite;
@@ -44,6 +52,10 @@ t_sprite	*create_new_sprite(t_data *mlx, int y, int x)
 	new_sprite->texture = mlx->list_tex.sprite;
 	return (new_sprite);
 }
+
+/*
+**		Loops through the map. Adds the sprite to the struct when found.	
+*/
 
 void		locate_sprites(t_data *mlx)
 {
@@ -68,6 +80,10 @@ void		locate_sprites(t_data *mlx)
 		y++;
 	}
 }
+
+/*
+**		Main functions for sprites setup.
+*/
 
 void		sprite_setup(t_data *mlx)
 {

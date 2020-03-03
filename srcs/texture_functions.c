@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/25 08:09:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 09:22:28 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 15:42:20 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ t_texture	*select_texture_img(t_data *mlx, int i)
 **		Creates an image for every available texture.
 */
 
-int			texture_setup(t_data *mlx)
+void		texture_setup(t_data *mlx)
 {
 	int			i;
 	t_list_tex	*tex;
@@ -113,5 +113,4 @@ int			texture_setup(t_data *mlx)
 			&cur->img.bits_per_pixel, &cur->img.line_length, &cur->img.endian);
 		i++;
 	}
-	return (0);
 }

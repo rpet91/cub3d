@@ -6,27 +6,19 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 15:25:20 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 09:21:40 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 16:07:40 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <mlx.h>
 #include "../cub3d.h"
 
 int		close_game(t_data *mlx)
 {
-	free_array(mlx->map.map);
-	free(mlx->map.line);
-	free(mlx->map.north_tex);
-	free(mlx->map.south_tex);
-	free(mlx->map.west_tex);
-	free(mlx->map.east_tex);
-	free(mlx->map.sprite_tex);
 	destroy_textures(mlx);
-	mlx_destroy_image(mlx->mlx, mlx->img1.img);
-	mlx_destroy_image(mlx->mlx, mlx->img2.img);
-	mlx_destroy_window(mlx->mlx, mlx->win);
+	free_sprite_array(mlx);
+	free_map(mlx);
+	destroy_mlx(mlx);
 	exit(0);
 	return (0);
 }

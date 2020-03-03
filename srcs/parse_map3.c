@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/11 15:31:37 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 13:30:13 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 16:14:36 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,43 +17,45 @@
 **		Checks if every map element received info.
 */
 
-void	element_validation(t_map *map)
+void	element_validation(t_data *mlx)
 {
-	if (map->res.x == 0 || map->res.y == 0 || map->floor_rgb == -1 ||
-			map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
-			|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0)
-		map_error_handling(NO_INFO, map);
-	map_information(map, map->line);
+	t_map	*map;
+
+	map = &mlx->map;
+	if (map->res.x == 0 || map->res.y == 0 || map->floor_rgb == -1
+	|| map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
+	|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0)
+		error_handling(NO_INFO, mlx);
 }
 
 /*
 **		Makes a rectangle from the build map.
 */
 
-char	**make_rectangle(t_map *map)
+char	**make_rectangle(t_data *mlx)
 {
 	char	*extended_line;
 	int		y;
 	int		old_len;
 
 	y = 0;
-	while (map->map[y] != NULL)
+	while (mlx->map.map[y] != NULL)
 	{
-		old_len = ft_strlen(map->map[y]);
-		if (old_len < map->size.x)
+		old_len = ft_strlen(mlx->map.map[y]);
+		if (old_len < mlx->map.size.x)
 		{
-			extended_line = malloc(sizeof(char) * (map->size.x + 1));
+			extended_line = malloc(sizeof(char) * (mlx->map.size.x + 1));
 			if (extended_line == NULL)
 				return (NULL);
-			ft_memcpy(extended_line, map->map[y], old_len);
-			ft_memset(extended_line + old_len, '0', map->size.x - old_len);
-			extended_line[map->size.x] = '\0';
-			free(map->map[y]);
-			map->map[y] = extended_line;
+			ft_memcpy(extended_line, mlx->map.map[y], old_len);
+			ft_memset(extended_line + old_len, '0', mlx->map.size.x - old_len);
+			extended_line[mlx->map.size.x] = '\0';
+			free(mlx->map.map[y]);
+			mlx->map.map[y] = extended_line;
 		}
 		y++;
 	}
-	return (map->map);
+	return (mlx->map.map);
 }
 
 /*
@@ -87,7 +89,7 @@ char	**add_line_to_map(char **old_map, char *new_line, int y)
 **		Erases the spaces from the given map line. Locates player position.
 */
 
-char	*remove_spaces(t_map *map, char *str)
+char	*remove_spaces(t_data *mlx, char *str)
 {
 	int		i;
 	int		j;
@@ -100,14 +102,14 @@ char	*remove_spaces(t_map *map, char *str)
 		{
 			str[j] = str[i];
 			if (ft_strchr("NSEW", str[j]) == 1)
-				map->player.x = j;
+				mlx->map.player.x = j;
 			j++;
 		}
 		i++;
 	}
 	str[j] = '\0';
-	if (map->player.x == 0)
-		map->player.y++;
+	if (mlx->map.player.x == 0)
+		mlx->map.player.y++;
 	return (str);
 }
 
@@ -115,27 +117,28 @@ char	*remove_spaces(t_map *map, char *str)
 **		Main function about creating the map.
 */
 
-void	map_information(t_map *map, char *line)
+void	map_information(t_data *mlx, char *line)
 {
 	char	*new_line;
 	int		len;
 
-	if (map->check == 0)
-		map->check = 1;
-	new_line = ft_strdup(remove_spaces(map, line));
-	if (new_line == NULL || map->check == 2)
+	element_validation(mlx);
+	if (mlx->map.check == 0)
+		mlx->map.check = 1;
+	new_line = ft_strdup(remove_spaces(mlx, line));
+	if (new_line == NULL || mlx->map.check == 2)
 	{
 		if (new_line != NULL)
 		{
 			free(new_line);
-			map_error_handling(INVALID_CHAR, map);
+			error_handling(INVALID_CHAR, mlx);
 		}
-		map_error_handling(MALLOC, map);
+		error_handling(MALLOC, mlx);
 	}
 	len = ft_strlen(new_line);
-	map->map = add_line_to_map(map->map, new_line, map->size.y);
-	if (map->map == NULL)
-		map_error_handling(MALLOC, map);
-	map->size.x = (len > map->size.x) ? len : map->size.x;
-	map->size.y++;
+	mlx->map.map = add_line_to_map(mlx->map.map, new_line, mlx->map.size.y);
+	if (mlx->map.map == NULL)
+		error_handling(MALLOC, mlx);
+	mlx->map.size.x = (len > mlx->map.size.x) ? len : mlx->map.size.x;
+	mlx->map.size.y++;
 }

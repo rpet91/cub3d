@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/10 11:02:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/27 15:53:31 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 13:51:45 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,26 @@
 **		Reads info about map size.
 */
 
-void	map_resolution(t_map *map, char *str)
+void	map_resolution(t_data *mlx, char *str)
 {
 	char	**resolution;
 
-	if (map->res.x != 0 || map->res.y != 0 || map->check != 0)
-		map_error_handling(WRONG_INFO, map);
+	if (mlx->map.res.x != 0 || mlx->map.res.y != 0 || mlx->map.check != 0)
+		error_handling(WRONG_INFO, mlx);
 	resolution = ft_split(str, ' ');
 	if (resolution == NULL)
-		map_error_handling(MALLOC, map);
+		error_handling(MALLOC, mlx);
 	if (ft_strncmp(resolution[0], "R", ft_strlen(resolution[0])) != 0
 			|| resolution[3] != NULL)
 	{
 		free_array(resolution);
-		map_error_handling(WRONG_INFO, map);
+		error_handling(WRONG_INFO, mlx);
 	}
-	map->res.x = ft_atoi(resolution[1]);
-	map->res.y = ft_atoi(resolution[2]);
+	mlx->map.res.x = ft_atoi(resolution[1]);
+	mlx->map.res.y = ft_atoi(resolution[2]);
 	free_array(resolution);
-	if (map->res.x < 1 || map->res.y < 1)
-		map_error_handling(WRONG_RES_SIZE, map);
+	if (mlx->map.res.x < 1 || mlx->map.res.y < 1)
+		error_handling(WRONG_RES_SIZE, mlx);
 }
 
 /*
@@ -75,25 +75,25 @@ int		get_color(char *color_line)
 **		Checks if there is a valid given color string for the ceiling/floor.
 */
 
-void	map_read_color(int *rgb, char *str, char *loc, t_map *map)
+void	read_color(int *rgb, char *str, char *loc, t_data *mlx)
 {
 	char	**color;
 
-	if (*rgb != -1 || map->check != 0)
-		map_error_handling(WRONG_INFO, map);
+	if (*rgb != -1 || mlx->map.check != 0)
+		error_handling(WRONG_INFO, mlx);
 	color = ft_split(str, ' ');
 	if (color == NULL)
-		map_error_handling(MALLOC, map);
+		error_handling(MALLOC, mlx);
 	if (ft_strncmp(color[0], loc, ft_strlen(color[0])) != 0 || color[2] != NULL)
 	{
 		free_array(color);
-		map_error_handling(WRONG_INFO, map);
+		error_handling(WRONG_INFO, mlx);
 	}
 	*rgb = get_color(color[1]);
 	if (get_color(color[1]) == -1)
 	{
 		free_array(color);
-		map_error_handling(WRONG_COLOR, map);
+		error_handling(WRONG_COLOR, mlx);
 	}
 	free_array(color);
 }
@@ -102,27 +102,27 @@ void	map_read_color(int *rgb, char *str, char *loc, t_map *map)
 **		Checks if there is a valid given texture string for the walls.
 */
 
-void	map_read_tex(char **wall, char *str, char *loc, t_map *map)
+void	read_tex(char **wall, char *str, char *loc, t_data *mlx)
 {
 	char	**text;
 
-	if (*wall != 0 || map->check != 0)
-		map_error_handling(WRONG_INFO, map);
+	if (*wall != 0 || mlx->map.check != 0)
+		error_handling(WRONG_INFO, mlx);
 	text = ft_split(str, ' ');
 	if (text == NULL)
-		map_error_handling(MALLOC, map);
+		error_handling(MALLOC, mlx);
 	if (ft_strncmp(text[0], loc, ft_strlen(text[0])) != 0 || text[2] != NULL)
 	{
 		free_array(text);
-		map_error_handling(WRONG_INFO, map);
+		error_handling(WRONG_INFO, mlx);
 	}
 	*wall = ft_strdup(text[1]);
 	free_array(text);
 	if (*wall == NULL)
-		map_error_handling(MALLOC, map);
+		error_handling(MALLOC, mlx);
 	if (open(*wall, O_RDONLY) == -1)
-		map_error_handling(WRONG_TEXTURE, map);
+		error_handling(WRONG_TEXTURE, mlx);
 	if (ft_strncmp(*wall + ft_strlen(*wall) - 4, ".png", 4) != 0 &&
 		ft_strncmp(*wall + ft_strlen(*wall) - 4, ".xpm", 4) != 0)
-		map_error_handling(WRONG_TEXTURE, map);
+		error_handling(WRONG_TEXTURE, mlx);
 }
