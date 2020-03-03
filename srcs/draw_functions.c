@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 08:09:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 09:20:38 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 11:27:03 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,10 @@ void			draw_texture(t_data *mlx, int x, int y, t_image *cur_img)
 }
 
 /*
-**		Main loop for drawing the image.
+**		Main loop for drawing the main image.
 */
 
-void			draw_image(t_data *mlx, int x, t_image *cur_img)
+void			draw_main_image(t_data *mlx, int x, t_image *cur_img)
 {
 	int		y;
 
@@ -78,5 +78,38 @@ void			draw_image(t_data *mlx, int x, t_image *cur_img)
 	{
 		put_pixel(cur_img, x, y, mlx->map.floor_rgb);
 		y++;
+	}
+}
+
+/*
+**		Draws and finds the coordinates of the sprite.
+*/
+
+void			draw_sprites(t_data *mlx, t_sprite *cur, t_image *cur_img)
+{
+	t_draw_sprite	*spr;
+	int				d;
+
+	spr = &mlx->draw_sprite;
+	spr->draw.x = spr->draw_start.x;
+	while (spr->draw.x < spr->draw_end.x)
+	{
+		spr->tex.x = (int)(256 * (spr->draw.x - (-spr->size / 2 + spr->screen))
+				* cur->texture.w / spr->size) / 256;
+		if (spr->transform.y > 0 &&
+				spr->transform.y < mlx->ray.dis_buffer[spr->draw.x])
+		{
+			spr->draw.y = spr->draw_start.y;
+			while (spr->draw.y < spr->draw_end.y)
+			{
+				d = spr->draw.y * 256 - mlx->map.res.y * 128 + spr->size * 128;
+				spr->tex.y = ((d * cur->texture.h) / spr->size) / 256;
+				spr->rgb = get_pixel(&cur->texture.img, spr->tex.x, spr->tex.y);
+				if (spr->rgb != 0)
+					put_pixel(cur_img, spr->draw.x, spr->draw.y, spr->rgb);
+				spr->draw.y++;
+			}
+		}
+		spr->draw.x++;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/26 18:01:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 09:20:53 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 10:47:51 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	map_error_handling(char *str, t_map *map)
 void	error_handling(char *str, t_data *mlx)
 {
 	destroy_textures(mlx);
-//	free_sprite_array(mlx);
+	free_sprite_array(mlx);
 	if (mlx->img1.img != NULL)
 		mlx_destroy_image(mlx->mlx, mlx->img1.img);
 	if (mlx->img2.img != NULL)

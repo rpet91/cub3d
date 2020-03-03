@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 13:51:05 by rpet          #+#    #+#                 */
-/*   Updated: 2020/02/10 09:40:33 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 10:47:13 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	char	*result;
 	int		len1;
 	int		len2;
-	int		i;
 
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
@@ -26,22 +25,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (result == NULL)
 	{
 		free(s1);
-		free(s2);
 		return (NULL);
 	}
-	i = 0;
-	while (s1[i] != '\0')
-	{
-		result[i] = s1[i];
-		i++;
-	}
-	i = 0;
-	while (s2[i] != '\0')
-	{
-		result[len1 + i] = s2[i];
-		i++;
-	}
-	result[len1 + len2] = '\0';
+	ft_strcpy(result, s1);
+	ft_strcpy(result + len1, s2);
 	free(s1);
 	return (result);
 }

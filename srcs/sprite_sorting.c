@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/27 09:34:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 09:22:23 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 11:27:39 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../cub3d.h"
 
 /*
-**		Sorts the sprites from furthest to closest to the player.
+**		Sorts the sprites from furthest to closest from the player's perspective
 */
 
 void	sort_sprites(t_data *mlx)
@@ -64,70 +64,67 @@ void	calculate_distances(t_data *mlx)
 	}
 }
 
+/*
+**		Calculates the size of the sprite relative to the player.
+*/
+
+void	calculate_sprite_size_on_screen(t_data *mlx)
+{
+	t_draw_sprite	*spr;
+
+	spr = &mlx->draw_sprite;
+	spr->size = (int)(fabs(mlx->map.res.y / spr->transform.y));
+	spr->draw_start.y = -spr->size / 2 + mlx->map.res.y / 2;
+	if (spr->draw_start.y < 0)
+		spr->draw_start.y = 0;
+	spr->draw_end.y = spr->size / 2 + mlx->map.res.y / 2;
+	if (spr->draw_end.y >= mlx->map.res.y)
+		spr->draw_end.y = mlx->map.res.y - 1;
+	spr->draw_start.x = -spr->size / 2 + spr->screen;
+	if (spr->draw_start.x < 0)
+		spr->draw_start.x = 0;
+	spr->draw_end.x = spr->size / 2 + spr->screen;
+	if (spr->draw_end.x >= mlx->map.res.x)
+		spr->draw_end.x = mlx->map.res.x - 1;
+}
+
+/*
+**		Calculates the depth of the sprite.
+*/
+
+void	calculate_sprite_depth(t_data *mlx)
+{
+	t_draw_sprite	*spr;
+	t_ray			*ray;
+
+	spr = &mlx->draw_sprite;
+	ray = &mlx->ray;
+	spr->inv_det = 1.0 /
+			(ray->plane.x * ray->dir.y - ray->dir.x * ray->plane.y);
+	spr->transform.x = spr->inv_det * (ray->dir.y * spr->sprite.x -
+			ray->dir.x * spr->sprite.y);
+	spr->transform.y = spr->inv_det * (-ray->plane.y * spr->sprite.x +
+			ray->plane.x * spr->sprite.y);
+	spr->screen = (int)((mlx->map.res.x / 2) *
+			(1 + spr->transform.x / spr->transform.y));
+}
+
 void	sprite_engine(t_data *mlx, t_image *cur_img)
 {
 	t_sprite		*cur;
-	t_draw_sprite	*spr;
-	t_ray			*ray;
-	unsigned int	rgb;
 	int				i;
-	int				d;
 
 	calculate_distances(mlx);
 	sort_sprites(mlx);
-	spr = &mlx->draw_sprite;
-	ray = &mlx->ray;
 	i = 0;
 	while (i < mlx->list.amount)
 	{
 		cur = mlx->list.sprites[i];
-		spr->sprite.x = cur->coords.x - mlx->move.pos.x;
-		spr->sprite.y = cur->coords.y - mlx->move.pos.y;
-		spr->inv_det = 1.0 /
-				(ray->plane.x * ray->dir.y - ray->dir.x * ray->plane.y);
-		spr->transform.x = spr->inv_det * (ray->dir.y * spr->sprite.x -
-				ray->dir.x * spr->sprite.y);
-		spr->transform.y = spr->inv_det * (-ray->plane.y * spr->sprite.x +
-				ray->plane.x * spr->sprite.y);
-		spr->screen = (int)((mlx->map.res.x / 2) *
-				(1 + spr->transform.x / spr->transform.y));
-		spr->size = (int)fabs(mlx->map.res.y / spr->transform.y);
-
-		spr->draw_start.y = -spr->size / 2 + mlx->map.res.y / 2;
-		if (spr->draw_start.y < 0)
-			spr->draw_start.y = 0;
-		spr->draw_end.y = spr->size / 2 + mlx->map.res.y / 2;
-		if (spr->draw_end.y >= mlx->map.res.y)
-			spr->draw_end.y = mlx->map.res.y - 1;
-
-		spr->draw_start.x = -spr->size / 2 + spr->screen;
-		if (spr->draw_start.x < 0)
-			spr->draw_start.x = 0;
-		spr->draw_end.x = spr->size / 2 + spr->screen;
-		if (spr->draw_end.x >= mlx->map.res.x)
-			spr->draw_end.x = mlx->map.res.x - 1;
-
-		spr->draw.x = spr->draw_start.x;
-		while (spr->draw.x < spr->draw_end.x)
-		{
-			spr->tex.x = (int)(256 * (spr->draw.x - (-spr->size / 2 +
-						spr->screen)) * cur->texture.w / spr->size) / 256;
-			if (spr->transform.y > 0 &&
-					spr->transform.y < ray->dis_buffer[spr->draw.x])
-			{
-				spr->draw.y = spr->draw_start.y;
-				while (spr->draw.y < spr->draw_end.y)
-				{
-					d = spr->draw.y*256-mlx->map.res.y * 128 + spr->size * 128;
-					spr->tex.y = ((d * cur->texture.h) / spr->size) / 256;
-					rgb = get_pixel(&cur->texture.img, spr->tex.x, spr->tex.y);
-					if (rgb != 0)
-						put_pixel(cur_img, spr->draw.x, spr->draw.y, rgb);
-					spr->draw.y++;
-				}
-			}
-			spr->draw.x++;
-		}
+		mlx->draw_sprite.sprite.x = cur->coords.x - mlx->move.pos.x;
+		mlx->draw_sprite.sprite.y = cur->coords.y - mlx->move.pos.y;
+		calculate_sprite_depth(mlx);
+		calculate_sprite_size_on_screen(mlx);
+		draw_sprites(mlx, cur, cur_img);
 		i++;
 	}
 }
