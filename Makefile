@@ -6,7 +6,7 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/03/03 15:16:20 by rpet          ########   odam.nl          #
+#    Updated: 2020/03/05 16:23:02 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,9 +15,10 @@ CC = gcc
 _SRCS = main.c render_frame.c hook_functions.c draw_functions.c move_player.c \
 	   raycasting.c free_functions.c error_functions.c texture_functions.c \
 	   sprite_setup.c sprite_sorting.c parse_map1.c parse_map2.c parse_map3.c \
-	   map_validation.c empty_struct_functions.c \
+	   map_validation.c empty_struct_functions.c bmp.c \
 	   ft_putstr_fd.c ft_strlen.c ft_strchr.c ft_strjoin.c ft_strdup.c \
-	   ft_strcpy.c ft_split.c ft_atoi.c ft_strncmp.c ft_memcpy.c ft_memset.c
+	   ft_strcpy.c ft_split.c ft_atoi.c ft_strcmp.c ft_memcpy.c ft_memset.c \
+	   ft_bzero.c ft_isnumeric.c
 _OBJS := $(_SRCS:.c=.o)
 SRCSDIR = srcs/
 OBJSDIR = objs/

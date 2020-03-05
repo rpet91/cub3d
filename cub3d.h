@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:40:50 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/05 16:14:07 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,14 @@
 # define KEY_LEFT 123
 # define KEY_RIGHT 124
 
-# define ARGUMENTS "Invalid amount of given arguments."
+# define ARGUMENTS "Wrong amount of input arguments."
+# define BMP "Second argument needs to be '--save'."
 # define MALLOC "Something went wrong with allocating memory."
 # define MLX_ERROR "Something went wrong with the mlx setup."
 # define TEXTURE_ERROR "Something went wrong with the texture setup."
 # define NO_CUB "No valid map file given. A .cub file is needed."
 # define READ_ERROR "Something went wrong while reading the file."
+# define WRITE_ERROR "Something went wrong while writing the file."
 # define OPEN_MAP "Invalid map. Map is not surrounded by walls."
 # define INVALID_CHAR "Found an invalid character in the cub file."
 # define NO_INFO "Didn't receive enough map info."
@@ -37,7 +39,9 @@
 # define WRONG_COLOR "Invalid color information."
 # define WRONG_TEXTURE "Invalid texture location/file."
 # define WRONG_RES_SIZE "Given resolution is too small."
+# define WRONG_RES_CHAR "Invalid characters in the resolution."
 # define WRONG_PLAYER_POS "Received zero or more than one starting coords."
+# define SCREENSHOT "Failed to create a screenshot.bmp file."
 
 /*
 **		Two structs for vector values.
@@ -207,7 +211,6 @@ typedef struct		s_data {
 	t_ray_tex		ray_tex;
 	t_map			map;
 	int				active_img;
-	int				color;
 }					t_data;
 
 /*
@@ -215,6 +218,7 @@ typedef struct		s_data {
 */
 
 int					frame_loop(t_data *mlx);
+void				screenshot_frame_loop(t_data *mlx);
 
 /*
 **		The main setup of the game.
@@ -223,6 +227,16 @@ int					frame_loop(t_data *mlx);
 void				starting_face_direction(t_data *mlx, int y, int x);
 void				get_correct_window_resolution(t_data *mlx);
 void				mlx_setup(t_data *mlx);
+
+/*
+**		BMP functions.
+*/
+
+int					draw_screenshot(t_data *mlx, int fd);
+unsigned int		bmp_size(int width, int height);
+void				bmp_header(t_data *mlx, int x, int y, int fd);
+void				create_image_data(t_data *mlx);
+void				make_screenshot(t_data *mlx);
 
 /*
 **		Sprite functions.
@@ -297,13 +311,13 @@ void				parse_map(t_data *mlx, char *str);
 
 void				map_resolution(t_data *mlx, char *str);
 int					get_color(char *color_line);
-void				read_color(int *rgb, char *str, char *loc, t_data *mlx);
-void				read_tex(char **wall, char *str, char *loc, t_data *mlx);
+void				read_color(int *rgb, char *str, char *type, t_data *mlx);
+void				read_tex(char **wall, char *str, char *type, t_data *mlx);
 
 void				element_validation(t_data *mlx);
 char				**make_rectangle(t_data *mlx);
 char				**add_line_to_map(char **old_map, char *new_line, int y);
-char				*remove_spaces(t_data *mlx, char *str);
+char				*replace_spaces(t_data *mlx, char *str);
 void				map_information(t_data *mlx, char *line);
 
 int					check_closed(t_data *mlx, char **copy_map, int y, int x);
@@ -342,8 +356,10 @@ char				*ft_strdup(char *str);
 void				ft_strcpy(char *dst, char *src);
 char				**ft_split(char const *s, char c);
 int					ft_atoi(const char *str);
-int					ft_strncmp(const char *s1, const char *s2, size_t n);
+int					ft_strcmp(const char *s1, const char *s2);
 void				*ft_memcpy(void *dst, const void *src, size_t n);
 void				*ft_memset(void *b, int c, size_t len);
+void				ft_bzero(void *s, size_t n);
+int					ft_isnumeric(const char *s);
 
 #endif
