@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/25 08:09:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:42:20 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/04 08:50:49 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void		texture_setup(t_data *mlx)
 	while (i < 5)
 	{
 		cur = select_texture_img(mlx, i);
-		if (ft_strncmp(cur->path + ft_strlen(cur->path) - 4, ".png", 4) == 0)
+		if (ft_strcmp(cur->path + ft_strlen(cur->path) - 4, ".png") == 0)
 			cur->img.img = mlx_png_file_to_image(mlx->mlx, cur->path,
 					&cur->w, &cur->h);
 		else

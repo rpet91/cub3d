@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 11:05:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:55:26 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/05 13:49:54 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,31 +21,28 @@
 
 void	check_valid_info(t_data *mlx, char *line)
 {
-	t_map	*map;
-
-	map = &mlx->map;
+	if (*line == ' ' || *(line + ft_strlen(line) - 1) == ' ')
+		element_validation(mlx);
 	if (*line == '\0')
-		map->check = (map->check == 1) ? 2 : map->check;
-	else if (*line == ' ' || *(line + ft_strlen(line) - 1) == ' ')
-		error_handling(INVALID_CHAR, mlx);
+		mlx->map.check = (mlx->map.check == 1) ? 2 : mlx->map.check;
 	else if (*line == 'R')
-		map_resolution(mlx, map->line);
+		map_resolution(mlx, mlx->map.line);
 	else if (*line == 'F')
-		read_color(&map->floor_rgb, line, "F", mlx);
+		read_color(&mlx->map.floor_rgb, line, "F", mlx);
 	else if (*line == 'C')
-		read_color(&map->ceiling_rgb, line, "C", mlx);
+		read_color(&mlx->map.ceiling_rgb, line, "C", mlx);
 	else if (*line == 'N')
-		read_tex(&map->north_tex, line, "NO", mlx);
+		read_tex(&mlx->map.north_tex, line, "NO", mlx);
 	else if (*line == 'S' && *(line + 1) == 'O')
-		read_tex(&map->south_tex, line, "SO", mlx);
+		read_tex(&mlx->map.south_tex, line, "SO", mlx);
 	else if (*line == 'W')
-		read_tex(&map->west_tex, line, "WE", mlx);
+		read_tex(&mlx->map.west_tex, line, "WE", mlx);
 	else if (*line == 'E')
-		read_tex(&map->east_tex, line, "EA", mlx);
+		read_tex(&mlx->map.east_tex, line, "EA", mlx);
 	else if (*line == 'S' && *(line + 1) != 'O')
-		read_tex(&map->sprite_tex, line, "S", mlx);
+		read_tex(&mlx->map.sprite_tex, line, "S", mlx);
 	else
-		map_information(mlx, map->line);
+		map_information(mlx, mlx->map.line);
 }
 
 /*
@@ -117,7 +114,7 @@ void	parse_map(t_data *mlx, char *str)
 	int		ret;
 
 	empty_map(mlx);
-	if (ft_strncmp(str + ft_strlen(str) - 4, ".cub", 4) != 0)
+	if (ft_strcmp(str + ft_strlen(str) - 4, ".cub") != 0)
 		error_handling(NO_CUB, mlx);
 	mlx->map.fd = open(str, O_RDONLY);
 	if (mlx->map.fd == -1)
@@ -126,5 +123,6 @@ void	parse_map(t_data *mlx, char *str)
 	while (ret == 1)
 		ret = read_cub_file(mlx, mlx->map.fd);
 	close(mlx->map.fd);
+	mlx->map.fd = -1;
 	check_valid_map(mlx);
 }

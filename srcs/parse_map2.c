@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/10 11:02:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 13:51:45 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/04 13:07:01 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ void	map_resolution(t_data *mlx, char *str)
 	resolution = ft_split(str, ' ');
 	if (resolution == NULL)
 		error_handling(MALLOC, mlx);
-	if (ft_strncmp(resolution[0], "R", ft_strlen(resolution[0])) != 0
-			|| resolution[3] != NULL)
+	if (ft_strcmp(resolution[0], "R") != 0 || resolution[3] != NULL ||
+		ft_isnumeric(resolution[1]) == 0 || ft_isnumeric(resolution[2]) == 0)
 	{
 		free_array(resolution);
 		error_handling(WRONG_INFO, mlx);
@@ -75,7 +75,7 @@ int		get_color(char *color_line)
 **		Checks if there is a valid given color string for the ceiling/floor.
 */
 
-void	read_color(int *rgb, char *str, char *loc, t_data *mlx)
+void	read_color(int *rgb, char *str, char *type, t_data *mlx)
 {
 	char	**color;
 
@@ -84,7 +84,7 @@ void	read_color(int *rgb, char *str, char *loc, t_data *mlx)
 	color = ft_split(str, ' ');
 	if (color == NULL)
 		error_handling(MALLOC, mlx);
-	if (ft_strncmp(color[0], loc, ft_strlen(color[0])) != 0 || color[2] != NULL)
+	if (ft_strcmp(color[0], type) != 0 || color[2] != NULL)
 	{
 		free_array(color);
 		error_handling(WRONG_INFO, mlx);
@@ -102,7 +102,7 @@ void	read_color(int *rgb, char *str, char *loc, t_data *mlx)
 **		Checks if there is a valid given texture string for the walls.
 */
 
-void	read_tex(char **wall, char *str, char *loc, t_data *mlx)
+void	read_tex(char **wall, char *str, char *type, t_data *mlx)
 {
 	char	**text;
 
@@ -111,7 +111,7 @@ void	read_tex(char **wall, char *str, char *loc, t_data *mlx)
 	text = ft_split(str, ' ');
 	if (text == NULL)
 		error_handling(MALLOC, mlx);
-	if (ft_strncmp(text[0], loc, ft_strlen(text[0])) != 0 || text[2] != NULL)
+	if (ft_strcmp(text[0], type) != 0 || text[2] != NULL)
 	{
 		free_array(text);
 		error_handling(WRONG_INFO, mlx);
@@ -122,7 +122,7 @@ void	read_tex(char **wall, char *str, char *loc, t_data *mlx)
 		error_handling(MALLOC, mlx);
 	if (open(*wall, O_RDONLY) == -1)
 		error_handling(WRONG_TEXTURE, mlx);
-	if (ft_strncmp(*wall + ft_strlen(*wall) - 4, ".png", 4) != 0 &&
-		ft_strncmp(*wall + ft_strlen(*wall) - 4, ".xpm", 4) != 0)
+	if (ft_strcmp(*wall + ft_strlen(*wall) - 4, ".png") != 0 &&
+		ft_strcmp(*wall + ft_strlen(*wall) - 4, ".xpm") != 0)
 		error_handling(WRONG_TEXTURE, mlx);
 }

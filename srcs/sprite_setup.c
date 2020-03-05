@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/27 10:58:07 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:48:21 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/03 16:46:59 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_sprite	*create_new_sprite(t_data *mlx, int y, int x)
 }
 
 /*
-**		Loops through the map. Adds the sprite to the struct when found.	
+**		Loops through the map. Adds the sprite to the struct when found.
 */
 
 void		locate_sprites(t_data *mlx)

@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:35:14 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/05 11:29:11 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,13 @@ int		main(int argc, char **argv)
 {
 	t_data		mlx;
 
-	if (argc <= 1 || argc >= 4)
+	if (argc < 2 || argc > 3)
 		error_message(ARGUMENTS);
+	if (argc == 3 && ft_strcmp(argv[2], "--save") != 0)
+		error_message(BMP);
 	parse_map(&mlx, argv[1]);
+	if (argc == 3)
+		make_screenshot(&mlx);
 	mlx_setup(&mlx);
 	texture_setup(&mlx);
 	sprite_setup(&mlx);

@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/11 15:31:37 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 16:14:36 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/04 10:59:07 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void	element_validation(t_data *mlx)
 	|| map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
 	|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0)
 		error_handling(NO_INFO, mlx);
+	else if (map->check == 0)
+		map->check = 1;
 }
 
 /*
@@ -89,25 +91,19 @@ char	**add_line_to_map(char **old_map, char *new_line, int y)
 **		Erases the spaces from the given map line. Locates player position.
 */
 
-char	*remove_spaces(t_data *mlx, char *str)
+char	*replace_spaces(t_data *mlx, char *str)
 {
 	int		i;
-	int		j;
 
 	i = 0;
-	j = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] != ' ')
-		{
-			str[j] = str[i];
-			if (ft_strchr("NSEW", str[j]) == 1)
-				mlx->map.player.x = j;
-			j++;
-		}
+		if (str[i] == ' ')
+			str[i] = '0';
+		if (ft_strchr("NSEW", str[i]) == 1)
+			mlx->map.player.x = i;
 		i++;
 	}
-	str[j] = '\0';
 	if (mlx->map.player.x == 0)
 		mlx->map.player.y++;
 	return (str);
@@ -123,9 +119,7 @@ void	map_information(t_data *mlx, char *line)
 	int		len;
 
 	element_validation(mlx);
-	if (mlx->map.check == 0)
-		mlx->map.check = 1;
-	new_line = ft_strdup(remove_spaces(mlx, line));
+	new_line = ft_strdup(replace_spaces(mlx, line));
 	if (new_line == NULL || mlx->map.check == 2)
 	{
 		if (new_line != NULL)

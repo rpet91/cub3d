@@ -6,10 +6,11 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/03/03 12:59:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 16:07:57 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/04 11:21:38 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
 #include <stdlib.h>
 #include <mlx.h>
 #include "../cub3d.h"
@@ -67,6 +68,8 @@ void	destroy_textures(t_data *mlx)
 
 void	free_map(t_data *mlx)
 {
+	if (mlx->map.fd != -1)
+		close(mlx->map.fd);
 	if (mlx->map.line != NULL)
 		free(mlx->map.line);
 	if (mlx->map.north_tex != NULL)

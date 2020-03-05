@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/05 13:49:46 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 10:51:34 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/05 11:51:00 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,23 @@ int		frame_loop(t_data *mlx)
 	mlx->active_img = !mlx->active_img;
 	move_player(mlx);
 	return (0);
+}
+
+/*
+**		Renders one frame for the screenshot.
+*/
+
+void	screenshot_frame_loop(t_data *mlx)
+{
+	int		x;
+
+	x = 0;
+	while (x < mlx->map.res.x)
+	{
+		calculate_variables(mlx, x);
+		calculate_texture(mlx);
+		draw_main_image(mlx, x, &mlx->img1);
+		x++;
+	}
+	sprite_engine(mlx, &mlx->img1);
 }
