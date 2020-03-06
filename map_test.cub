@@ -2,7 +2,7 @@ R 801 600
 F 74,63,255
 C 200,200,252
 
-NO textures/bluestone.png
+NO textures/blue stone.png
 SO textures/redbrick.png
 WE textures/colorstone.png
 EA textures/eagle.xpm

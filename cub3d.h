@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/05 16:14:07 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/06 13:32:04 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@
 # define WRONG_RES_CHAR "Invalid characters in the resolution."
 # define WRONG_PLAYER_POS "Received zero or more than one starting coords."
 # define SCREENSHOT "Failed to create a screenshot.bmp file."
+
+# include <stdlib.h>
 
 /*
 **		Two structs for vector values.
@@ -211,6 +213,7 @@ typedef struct		s_data {
 	t_ray_tex		ray_tex;
 	t_map			map;
 	int				active_img;
+	int				mouse;
 }					t_data;
 
 /*
@@ -279,6 +282,7 @@ void				draw_sprites(t_data *mlx, t_sprite *cur, t_image *cur_img);
 
 int					key_press(int keycode, t_data *mlx);
 int					key_release(int keycode, t_data *mlx);
+int					mouse_move(int x, int y, t_data *mlx);
 int					close_game(t_data *mlx);
 
 /*
@@ -312,7 +316,7 @@ void				parse_map(t_data *mlx, char *str);
 void				map_resolution(t_data *mlx, char *str);
 int					get_color(char *color_line);
 void				read_color(int *rgb, char *str, char *type, t_data *mlx);
-void				read_tex(char **wall, char *str, char *type, t_data *mlx);
+void				read_tex(char **tex, char *str, t_data *mlx);
 
 void				element_validation(t_data *mlx);
 char				**make_rectangle(t_data *mlx);
@@ -345,21 +349,21 @@ void				error_message(char *str);
 void				error_handling(char *str, t_data *mlx);
 
 /*
-**		Util functions.
+**		Libft functions.
 */
 
-void				ft_putstr_fd(char *str, int fd);
-int					ft_strlen(char *str);
-int					ft_strchr(char *str, char c);
-char				*ft_strjoin(char *s1, char *s2);
-char				*ft_strdup(char *str);
-void				ft_strcpy(char *dst, char *src);
-char				**ft_split(char const *s, char c);
-int					ft_atoi(const char *str);
 int					ft_strcmp(const char *s1, const char *s2);
-void				*ft_memcpy(void *dst, const void *src, size_t n);
-void				*ft_memset(void *b, int c, size_t len);
-void				ft_bzero(void *s, size_t n);
+int					ft_strchr_i(char *str, char c);
+int					ft_atoi(const char *str);
 int					ft_isnumeric(const char *s);
+size_t				ft_strlen(const char *s);
+void				ft_putstr_fd(char *str, int fd);
+void				ft_strcpy(char *dst, char *src);
+void				ft_bzero(void *s, size_t n);
+void				*ft_memset(void *b, int c, size_t len);
+void				*ft_memcpy(void *dst, const void *src, size_t n);
+char				*ft_strdup(const char *s1);
+char				*ft_strjoin(char *s1, char *s2);
+char				**ft_split(char const *s, char c);
 
 #endif

@@ -6,7 +6,7 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/03/05 16:23:02 by rpet          ########   odam.nl          #
+#    Updated: 2020/03/06 10:03:09 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,10 +15,7 @@ CC = gcc
 _SRCS = main.c render_frame.c hook_functions.c draw_functions.c move_player.c \
 	   raycasting.c free_functions.c error_functions.c texture_functions.c \
 	   sprite_setup.c sprite_sorting.c parse_map1.c parse_map2.c parse_map3.c \
-	   map_validation.c empty_struct_functions.c bmp.c \
-	   ft_putstr_fd.c ft_strlen.c ft_strchr.c ft_strjoin.c ft_strdup.c \
-	   ft_strcpy.c ft_split.c ft_atoi.c ft_strcmp.c ft_memcpy.c ft_memset.c \
-	   ft_bzero.c ft_isnumeric.c
+	   map_validation.c empty_struct_functions.c bmp.c
 _OBJS := $(_SRCS:.c=.o)
 SRCSDIR = srcs/
 OBJSDIR = objs/
@@ -26,6 +23,8 @@ SRCS = $(addprefix $(SRCSDIR),$(_SRCS))
 OBJS = $(addprefix $(OBJSDIR),$(_OBJS))
 MLXDYL = libmlx.dylib
 MLXDIR = mlx/
+LIBFT = libft.a
+LIBFTDIR = libft/
 FRAMEWORK = -framework OpenGL -framework AppKit
 HEADER = cub3d.h
 FLAGS = -Wall -Werror -Wextra
@@ -39,17 +38,22 @@ $(OBJSDIR)%.o: $(SRCSDIR)%.c $(HEADER)
 		$(CC) $(FLAGS) -Imlx -c $< -o $@
 
 $(MLXDYL):
-		cd $(MLXDIR) && make && cp $(MLXDYL) ..
+		cd $(MLXDIR) && make && mv $(MLXDYL) ..
 
-$(NAME): $(MLXDYL) $(OBJS)
-		$(CC) -L. -lmlx $(FRAMEWORK) -o $(NAME) $(OBJS)
+$(LIBFT):
+		cd $(LIBFTDIR) && make && mv $(LIBFT) ..
+
+$(NAME): $(MLXDYL) $(LIBFT) $(OBJS)
+		$(CC) -L. -lmlx -lft $(FRAMEWORK) -o $(NAME) $(OBJS)
+
 clean:
 		rm -f $(OBJS)
 		cd $(MLXDIR) && make clean
+		cd $(LIBFTDIR) && make clean
 		rm -f $(MLXDYL)
 
 fclean: clean
-		rm -f $(NAME)
+		rm -f $(NAME) $(LIBFT)
 
 re: fclean all
 
