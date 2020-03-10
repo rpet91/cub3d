@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 11:05:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/05 13:49:54 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/06 16:16:30 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,21 +26,21 @@ void	check_valid_info(t_data *mlx, char *line)
 	if (*line == '\0')
 		mlx->map.check = (mlx->map.check == 1) ? 2 : mlx->map.check;
 	else if (*line == 'R')
-		map_resolution(mlx, mlx->map.line);
+		map_resolution(mlx, line);
 	else if (*line == 'F')
 		read_color(&mlx->map.floor_rgb, line, "F", mlx);
 	else if (*line == 'C')
 		read_color(&mlx->map.ceiling_rgb, line, "C", mlx);
-	else if (*line == 'N')
-		read_tex(&mlx->map.north_tex, line, "NO", mlx);
+	else if (*line == 'N' && *(line + 1) == 'O')
+		read_tex(&mlx->map.north_tex, line + 2, mlx);
 	else if (*line == 'S' && *(line + 1) == 'O')
-		read_tex(&mlx->map.south_tex, line, "SO", mlx);
-	else if (*line == 'W')
-		read_tex(&mlx->map.west_tex, line, "WE", mlx);
-	else if (*line == 'E')
-		read_tex(&mlx->map.east_tex, line, "EA", mlx);
+		read_tex(&mlx->map.south_tex, line + 2, mlx);
+	else if (*line == 'W' && *(line + 1) == 'E')
+		read_tex(&mlx->map.west_tex, line + 2, mlx);
+	else if (*line == 'E' && *(line + 1) == 'A')
+		read_tex(&mlx->map.east_tex, line + 2, mlx);
 	else if (*line == 'S' && *(line + 1) != 'O')
-		read_tex(&mlx->map.sprite_tex, line, "S", mlx);
+		read_tex(&mlx->map.sprite_tex, line + 1, mlx);
 	else
 		map_information(mlx, mlx->map.line);
 }
@@ -92,7 +92,7 @@ int		read_cub_file(t_data *mlx, int fd)
 	if (mlx->map.line == NULL)
 		error_handling(MALLOC, mlx);
 	ret = 1;
-	while (ret > 0 && ft_strchr(mlx->map.line, '\n') == 0)
+	while (ret > 0 && ft_strchr_i(mlx->map.line, '\n') == 0)
 	{
 		ret = read(fd, str, BUFF_SIZE);
 		if (ret == -1)

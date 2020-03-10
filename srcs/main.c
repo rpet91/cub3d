@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/24 09:46:50 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/05 11:29:11 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/06 13:32:24 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	starting_face_direction(t_data *mlx, int y, int x)
 	mlx->move.pos.y = y + 0.5;
 	mlx->move.pos.x = x + 0.5;
 	mlx->map.map[y][x] = '0';
+	mlx->mouse = 0;
 }
 
 /*
@@ -97,8 +98,9 @@ int		main(int argc, char **argv)
 	mlx_setup(&mlx);
 	texture_setup(&mlx);
 	sprite_setup(&mlx);
-	mlx_hook(mlx.win, 2, 0, key_press, &mlx);
+	mlx_hook(mlx.win, 2, 1L << 0, key_press, &mlx);
 	mlx_hook(mlx.win, 3, 1L << 1, key_release, &mlx);
+	mlx_hook(mlx.win, 6, 1L << 6, mouse_move, &mlx);
 	mlx_hook(mlx.win, 17, 1L << 17, close_game, &mlx);
 	mlx_do_key_autorepeatoff(mlx.mlx);
 	mlx_loop_hook(mlx.mlx, frame_loop, &mlx);

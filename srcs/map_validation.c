@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/18 11:02:54 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:57:19 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/05 16:52:12 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	check_valid_map(t_data *mlx)
 		x = 0;
 		while (mlx->map.map[y][x] && check_multiple_players <= 1)
 		{
-			if (ft_strchr("NSEW", mlx->map.map[y][x]) == 1)
+			if (ft_strchr_i("NSEW", mlx->map.map[y][x]) == 1)
 				check_multiple_players++;
 			else if (mlx->map.map[y][x] < '0' || mlx->map.map[y][x] > '2')
 				error_handling(INVALID_CHAR, mlx);

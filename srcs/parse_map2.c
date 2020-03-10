@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/10 11:02:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/04 13:07:01 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/06 11:58:01 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,27 +102,18 @@ void	read_color(int *rgb, char *str, char *type, t_data *mlx)
 **		Checks if there is a valid given texture string for the walls.
 */
 
-void	read_tex(char **wall, char *str, char *type, t_data *mlx)
+void	read_tex(char **tex, char *str, t_data *mlx)
 {
-	char	**text;
-
-	if (*wall != 0 || mlx->map.check != 0)
+	if (*tex != 0 || mlx->map.check != 0 || *str != ' ')
 		error_handling(WRONG_INFO, mlx);
-	text = ft_split(str, ' ');
-	if (text == NULL)
-		error_handling(MALLOC, mlx);
-	if (ft_strcmp(text[0], type) != 0 || text[2] != NULL)
-	{
-		free_array(text);
-		error_handling(WRONG_INFO, mlx);
-	}
-	*wall = ft_strdup(text[1]);
-	free_array(text);
-	if (*wall == NULL)
-		error_handling(MALLOC, mlx);
-	if (open(*wall, O_RDONLY) == -1)
+	while (*str == ' ')
+		str++;
+	if (open(str, O_RDONLY) == -1)
 		error_handling(WRONG_TEXTURE, mlx);
-	if (ft_strcmp(*wall + ft_strlen(*wall) - 4, ".png") != 0 &&
-		ft_strcmp(*wall + ft_strlen(*wall) - 4, ".xpm") != 0)
+	*tex = ft_strdup(str);
+	if (*tex == NULL)
+		error_handling(MALLOC, mlx);
+	if (ft_strcmp(*tex + ft_strlen(*tex) - 4, ".png") != 0 &&
+		ft_strcmp(*tex + ft_strlen(*tex) - 4, ".xpm") != 0)
 		error_handling(WRONG_TEXTURE, mlx);
 }

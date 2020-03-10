@@ -6,11 +6,11 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 08:09:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/10 08:56:17 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/10 09:45:25 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub3d.h"
+#include "../cub3d_bonus.h"
 
 /*
 **		Returns a color value out of a texture coordinate.

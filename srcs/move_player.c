@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/21 11:31:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 09:21:54 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/06 12:44:41 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	rotate_player(t_data *mlx, double dir)
 void	move_player(t_data *mlx)
 {
 	mlx->move.move_speed = 0.08;
-	mlx->move.rot_speed = 0.05;
+	mlx->move.rot_speed = 0.04;
 	if (mlx->move.w == 1)
 		move_forward_or_backward(mlx, mlx->move.move_speed);
 	if (mlx->move.s == 1)
