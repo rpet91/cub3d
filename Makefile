@@ -6,36 +6,48 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/03/06 10:03:09 by rpet          ########   odam.nl          #
+#    Updated: 2020/03/11 13:12:13 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = gcc
-_SRCS = main.c render_frame.c hook_functions.c draw_functions.c move_player.c \
-	   raycasting.c free_functions.c error_functions.c texture_functions.c \
-	   sprite_setup.c sprite_sorting.c parse_map1.c parse_map2.c parse_map3.c \
-	   map_validation.c empty_struct_functions.c bmp.c
-_OBJS := $(_SRCS:.c=.o)
 SRCSDIR = srcs/
 OBJSDIR = objs/
-SRCS = $(addprefix $(SRCSDIR),$(_SRCS))
+_OBJS = main.o render_frame.o hook_functions.o move_player.o free_functions.o \
+	   raycasting.o error_functions.o sprite_setup.o draw_functions.o \
+	   sprite_raycast.o parse_map1.o parse_map3.o map_validation.o \
+	   empty_struct_functions.o bmp.o draw_shades.o texture_functions.o
 OBJS = $(addprefix $(OBJSDIR),$(_OBJS))
+_REG_OBJS = parse_map2.o draw_floors.o
+REG_OBJS = $(addprefix $(OBJSDIR),$(_REG_OBJS))
+_BONUS_OBJS = parse_map2_bonus.o draw_floors_bonus.o
+BONUS_OBJS = $(addprefix $(OBJSDIR),$(_BONUS_OBJS))
+
 MLXDYL = libmlx.dylib
 MLXDIR = mlx/
 LIBFT = libft.a
 LIBFTDIR = libft/
 FRAMEWORK = -framework OpenGL -framework AppKit
-HEADER = cub3d.h
 FLAGS = -Wall -Werror -Wextra
+
+ifeq ($(BONUS),1)
+	ALL_OBJS = $(OBJS) $(BONUS_OBJS)
+	OTHER = $(REG_OBJS)
+	INCLUDES = cub3d_bonus.h
+else
+	ALL_OBJS = $(OBJS) $(REG_OBJS)
+	OTHER = $(BONUS_OBJS)
+	INCLUDES = cub3d.h
+endif
 
 .PHONY: all clean fclean re bonus
 
 all: $(NAME)
 
-$(OBJSDIR)%.o: $(SRCSDIR)%.c $(HEADER)
-		mkdir -p objs
-		$(CC) $(FLAGS) -Imlx -c $< -o $@
+$(OBJSDIR)%.o: $(SRCSDIR)%.c $(INCLUDES)
+		@mkdir -p objs
+		@$(CC) $(FLAGS) -I$(INCLUDES) -Imlx -c $< -o $@
 
 $(MLXDYL):
 		cd $(MLXDIR) && make && mv $(MLXDYL) ..
@@ -43,18 +55,21 @@ $(MLXDYL):
 $(LIBFT):
 		cd $(LIBFTDIR) && make && mv $(LIBFT) ..
 
-$(NAME): $(MLXDYL) $(LIBFT) $(OBJS)
-		$(CC) -L. -lmlx -lft $(FRAMEWORK) -o $(NAME) $(OBJS)
+$(NAME): $(MLXDYL) $(LIBFT) $(ALL_OBJS)
+		rm -f $(OTHER)
+		$(CC) -L. -lmlx -lft $(FRAMEWORK) -o $(NAME) $(ALL_OBJS)
 
 clean:
-		rm -f $(OBJS)
-		cd $(MLXDIR) && make clean
+		rm -f $(OBJS) $(REG_OBJS) $(BONUS_OBJS)
 		cd $(LIBFTDIR) && make clean
-		rm -f $(MLXDYL)
-
+		cd $(MLXDIR) && make clean
+		
 fclean: clean
-		rm -f $(NAME) $(LIBFT)
+		rm -f $(NAME)
+		rm -f $(LIBFT)
+		rm -f $(MLXDYL)
 
 re: fclean all
 
-bonus: $(NAME)
+bonus:
+		@make BONUS=1
