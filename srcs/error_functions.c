@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/26 18:01:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:38:23 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/10 16:08:37 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@
 void	error_message(char *str)
 {
 	ft_putstr_fd("Error\n", 1);
-	ft_putstr_fd(str, 1);
-	ft_putstr_fd("\n", 1);
+	ft_putendl_fd(str, 1);
 	exit(1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 11:05:08 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/06 16:16:30 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/12 17:35:50 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ void	check_valid_info(t_data *mlx, char *line)
 	else if (*line == 'R')
 		map_resolution(mlx, line);
 	else if (*line == 'F')
-		read_color(&mlx->map.floor_rgb, line, "F", mlx);
+		read_color(&mlx->map.floor_tex, &mlx->map.floor_rgb, line + 1, mlx);
 	else if (*line == 'C')
-		read_color(&mlx->map.ceiling_rgb, line, "C", mlx);
+		read_color(&mlx->map.ceiling_tex, &mlx->map.ceiling_rgb, line + 1, mlx);
 	else if (*line == 'N' && *(line + 1) == 'O')
 		read_tex(&mlx->map.north_tex, line + 2, mlx);
 	else if (*line == 'S' && *(line + 1) == 'O')

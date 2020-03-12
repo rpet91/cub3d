@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/03/03 12:59:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/04 11:21:38 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/10 15:10:25 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,10 @@ void	free_map(t_data *mlx)
 		free(mlx->map.east_tex);
 	if (mlx->map.sprite_tex != NULL)
 		free(mlx->map.sprite_tex);
+	if (mlx->map.floor_tex != NULL)
+		free(mlx->map.floor_tex);
+	if (mlx->map.ceiling_tex != NULL)
+		free(mlx->map.ceiling_tex);
 	if (mlx->map.map != NULL)
 		free_array(mlx->map.map);
 }

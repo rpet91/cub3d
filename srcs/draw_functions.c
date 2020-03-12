@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/07 08:09:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/10 08:56:17 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/12 15:44:58 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,48 @@ void			put_pixel(t_image *img, int x, int y, int color)
 }
 
 /*
+**		Draws the floor and ceiling colors when both solid.
+*/
+
+void			draw_solid_floors(t_data *mlx, t_image *cur_img)
+{
+	int		map_y;
+	int		y;
+	int		x;
+	int		rgb_c;
+	int		rgb_f;
+
+	map_y = mlx->map.res.y;
+	y = 0;
+	while (y < map_y / 2)
+	{
+		rgb_c = add_shades(mlx->map.ceiling_rgb, (map_y / 2.0) / y);
+		rgb_f = add_shades(mlx->map.floor_rgb, (map_y / 2.0) / y);
+		x = 0;
+		while (x < mlx->map.res.x)
+		{
+			put_pixel(cur_img, x, (map_y / 2) - y, rgb_c);
+			put_pixel(cur_img, x, (map_y / 2) + y, rgb_f);
+			x++;
+		}
+		y++;
+	}
+}
+
+/*
 **		Loops through the texture and draws every pixel.
 */
 
-void			draw_texture(t_data *mlx, int x, int y, t_image *cur_img)
+void			draw_wall_texture(t_data *mlx, int x, t_image *cur_img)
 {
+	int				y;
 	unsigned int	rgb;
 	t_texture		*cur_tex;
 	t_ray_tex		*ray;
 
-	cur_tex = get_texture_path(mlx);
+	cur_tex = get_wall_texture(mlx);
 	ray = &mlx->ray_tex;
+	y = mlx->ray.draw_start;
 	while (y < mlx->ray.draw_end)
 	{
 		ray->tex.y = (int)ray->tex_pos & (cur_tex->h - 1);
@@ -60,39 +91,11 @@ void			draw_texture(t_data *mlx, int x, int y, t_image *cur_img)
 }
 
 /*
-**		Main loop for drawing the main image.
-*/
-
-void			draw_main_image(t_data *mlx, int x, t_image *cur_img)
-{
-	int		y;
-	int		rgb;
-
-	y = 0;
-	while (y < mlx->ray.draw_start)
-	{
-		rgb = add_shades(mlx->map.ceiling_rgb, (mlx->map.res.y / 2.0) /
-				((mlx->map.res.y - y) - mlx->map.res.y / 2));
-		put_pixel(cur_img, x, y, rgb);
-		y++;
-	}
-	draw_texture(mlx, x, y, cur_img);
-	y = mlx->ray.draw_end;
-	while (y < mlx->map.res.y)
-	{
-		rgb = add_shades(mlx->map.floor_rgb, (mlx->map.res.y / 2.0) /
-				(y - mlx->map.res.y / 2));
-		put_pixel(cur_img, x, y, rgb);
-		y++;
-	}
-}
-
-/*
 **		Draws and finds the coordinates of the sprite.
 */
 
 void			draw_sprites(t_data *mlx, t_sprite *cur, t_image *cur_img,
-		t_draw_sprite *spr)
+								t_draw_sprite *spr)
 {
 	int				d;
 

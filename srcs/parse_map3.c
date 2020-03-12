@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/11 15:31:37 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/06 16:16:38 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/11 16:46:17 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,22 @@ void	element_validation(t_data *mlx)
 	map = &mlx->map;
 	if (map->res.x == 0 || map->res.y == 0 || map->floor_rgb == -1
 	|| map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
-	|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0)
+	|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0
+	|| map->floor_tex == 0 || map->ceiling_tex == 0)
+	{
+		printf("res.x: [%i]\n", map->res.x);
+		printf("res.y: [%i]\n", map->res.y);
+		printf("floor rgb: [%X]\n", map->floor_rgb);
+		printf("ceiling rgb: [%X]\n", map->ceiling_rgb);
+		printf("north tex: [%s]\n", map->north_tex);
+		printf("south tex: [%s]\n", map->south_tex);
+		printf("west tex: [%s]\n", map->west_tex);
+		printf("east tex: [%s]\n", map->east_tex);
+		printf("sprite tex: [%s]\n", map->sprite_tex);
+		printf("floor tex: [%s]\n", map->floor_tex);
+		printf("ceiling tex: [%s]\n", map->ceiling_tex);
 		error_handling(NO_INFO, mlx);
+	}
 }
 
 /*

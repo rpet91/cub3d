@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   parse_map2.c                                       :+:    :+:            */
+/*   parse_map2_bonus.c                                 :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/10 11:02:18 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/10 11:48:20 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/11 09:18:14 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
-#include "../cub3d.h"
+#include "../cub3d_bonus.h"
 
 /*
 **		Reads info about map size.
@@ -77,15 +77,24 @@ int		get_color(char *color_line)
 
 void	read_color(char **tex, int *rgb, char *str, t_data *mlx)
 {
+	int		color;
+
+	color = 0;
 	if (*tex != 0 || *rgb != -1 || mlx->map.check != 0 || *str != ' ')
 		error_handling(WRONG_INFO, mlx);
 	while (*str == ' ')
 		str++;
 	*rgb = get_color(str);
 	if (get_color(str) == -1)
-		error_handling(WRONG_COLOR, mlx);
-	*tex = malloc(1);
-	if (*tex == NULL)
+		color = 1;
+	if (color == 1)
+	{
+		*rgb = -2;
+		read_tex(tex, str - 1, mlx);
+	}
+	else
+		*tex = malloc(1);
+	if (*tex == NULL && color == 0)
 		error_handling(MALLOC, mlx);
 }
 

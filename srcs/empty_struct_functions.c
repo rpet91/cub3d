@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/03/03 15:13:52 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/03 15:54:47 by rpet          ########   odam.nl         */
+/*   Updated: 2020/03/12 17:34:31 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	empty_map(t_data *mlx)
 	mlx->map.west_tex = NULL;
 	mlx->map.east_tex = NULL;
 	mlx->map.sprite_tex = NULL;
+	mlx->map.floor_tex = NULL;
+	mlx->map.ceiling_tex = NULL;
 	mlx->map.floor_rgb = -1;
 	mlx->map.ceiling_rgb = -1;
 	mlx->map.check = 0;
