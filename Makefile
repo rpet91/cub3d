@@ -6,7 +6,7 @@
 #    By: rpet <marvin@codam.nl>                       +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/01/23 13:50:37 by rpet          #+#    #+#                  #
-#    Updated: 2020/03/11 13:12:13 by rpet          ########   odam.nl          #
+#    Updated: 2020/06/02 07:55:37 by rpet          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ LIBFT = libft.a
 LIBFTDIR = libft/
 FRAMEWORK = -framework OpenGL -framework AppKit
 FLAGS = -Wall -Werror -Wextra
+INCLUDES_OTHER = defines.h
 
 ifeq ($(BONUS),1)
 	ALL_OBJS = $(OBJS) $(BONUS_OBJS)
@@ -45,9 +46,9 @@ endif
 
 all: $(NAME)
 
-$(OBJSDIR)%.o: $(SRCSDIR)%.c $(INCLUDES)
+$(OBJSDIR)%.o: $(SRCSDIR)%.c $(INCLUDES) $(INCLUDES_OTHER)
 		@mkdir -p objs
-		@$(CC) $(FLAGS) -I$(INCLUDES) -Imlx -c $< -o $@
+		@$(CC) $(FLAGS) -I$(INCLUDES) -I$(INCLUDES_OTHER) -Imlx -c $< -o $@
 
 $(MLXDYL):
 		cd $(MLXDIR) && make && mv $(MLXDYL) ..
@@ -63,7 +64,7 @@ clean:
 		rm -f $(OBJS) $(REG_OBJS) $(BONUS_OBJS)
 		cd $(LIBFTDIR) && make clean
 		cd $(MLXDIR) && make clean
-		
+
 fclean: clean
 		rm -f $(NAME)
 		rm -f $(LIBFT)

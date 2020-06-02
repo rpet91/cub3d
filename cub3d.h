@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:18:01 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/12 17:02:19 by rpet          ########   odam.nl         */
+/*   Updated: 2020/06/02 07:58:20 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include "defines.h"
 # include "libft/libft.h"
 # include <stdlib.h>
-# include <stdio.h> //norm
 
 /*
 **		Two structs for vector values.
@@ -269,6 +268,8 @@ void				texture_setup(t_data *mlx);
 
 void				floors_raycast(t_data *mlx, int y);
 int					floor_rgb(t_data *mlx, int color, t_texture *tex, int y);
+void				calculate_ray_size(t_data *mlx);
+void				draw_texture_pixel(t_data *mlx, t_image *cur_img, int y);
 void				draw_floors(t_data *mlx, t_image *cur_img);
 
 /*
@@ -329,7 +330,7 @@ void				read_tex(char **tex, char *str, t_data *mlx);
 void				element_validation(t_data *mlx);
 char				**make_rectangle(t_data *mlx);
 char				**add_line_to_map(char **old_map, char *new_line, int y);
-char				*replace_spaces(t_data *mlx, char *str);
+char				*find_player_pos(t_data *mlx, char *str);
 void				map_information(t_data *mlx, char *line);
 
 int					check_closed(t_data *mlx, char **copy_map, int y, int x);
@@ -341,6 +342,7 @@ void				check_valid_map(t_data *mlx);
 */
 
 void				empty_map(t_data *mlx);
+void				empty_textures(t_data *mlx);
 void				empty_mlx(t_data *mlx);
 
 /*

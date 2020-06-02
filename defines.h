@@ -27,6 +27,7 @@
 # define MLX_ERROR "Something went wrong with the mlx setup."
 # define TEXTURE_ERROR "Something went wrong with the texture setup."
 # define NO_CUB "No valid map file given. A .cub file is needed."
+# define INVALID_CUB "The given .cub file can't be opened."
 # define READ_ERROR "Something went wrong while reading the file."
 # define WRITE_ERROR "Something went wrong while writing the file."
 # define OPEN_MAP "Invalid map. Map is not surrounded by walls."
