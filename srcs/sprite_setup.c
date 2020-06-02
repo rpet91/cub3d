@@ -87,7 +87,6 @@ void		locate_sprites(t_data *mlx)
 
 void		sprite_setup(t_data *mlx)
 {
-	mlx->list.amount = 0;
 	mlx->list.sprites = malloc(sizeof(t_sprite *));
 	if (mlx->list.sprites == NULL)
 		error_handling(MALLOC, mlx);

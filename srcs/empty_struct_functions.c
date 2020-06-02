@@ -42,6 +42,19 @@ void	empty_map(t_data *mlx)
 	mlx->map.map[0] = NULL;
 }
 
+void	empty_textures(t_data *mlx)
+{
+	mlx->list_tex.north.img.img = NULL;
+	mlx->list_tex.south.img.img = NULL;
+	mlx->list_tex.west.img.img = NULL;
+	mlx->list_tex.east.img.img = NULL;
+	mlx->list_tex.sprite.img.img = NULL;
+	mlx->list_tex.floor.img.img = NULL;
+	mlx->list_tex.ceiling.img.img = NULL;
+	mlx->list.amount = 0;
+	mlx->list.sprites = NULL;
+}
+
 void	empty_mlx(t_data *mlx)
 {
 	mlx->mlx = NULL;

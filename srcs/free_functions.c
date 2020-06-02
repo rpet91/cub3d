@@ -68,7 +68,7 @@ void	destroy_textures(t_data *mlx)
 
 void	free_map(t_data *mlx)
 {
-	if (mlx->map.fd != -1)
+	if (mlx->map.fd > 2)
 		close(mlx->map.fd);
 	if (mlx->map.line != NULL)
 		free(mlx->map.line);

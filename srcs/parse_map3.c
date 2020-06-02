@@ -6,7 +6,7 @@
 /*   By: rpet <marvin@codam.nl>                       +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/11 15:31:37 by rpet          #+#    #+#                 */
-/*   Updated: 2020/03/11 16:46:17 by rpet          ########   odam.nl         */
+/*   Updated: 2020/06/02 08:03:30 by rpet          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,7 @@ void	element_validation(t_data *mlx)
 	|| map->ceiling_rgb == -1 || map->north_tex == 0 || map->south_tex == 0
 	|| map->west_tex == 0 || map->east_tex == 0 || map->sprite_tex == 0
 	|| map->floor_tex == 0 || map->ceiling_tex == 0)
-	{
-		printf("res.x: [%i]\n", map->res.x);
-		printf("res.y: [%i]\n", map->res.y);
-		printf("floor rgb: [%X]\n", map->floor_rgb);
-		printf("ceiling rgb: [%X]\n", map->ceiling_rgb);
-		printf("north tex: [%s]\n", map->north_tex);
-		printf("south tex: [%s]\n", map->south_tex);
-		printf("west tex: [%s]\n", map->west_tex);
-		printf("east tex: [%s]\n", map->east_tex);
-		printf("sprite tex: [%s]\n", map->sprite_tex);
-		printf("floor tex: [%s]\n", map->floor_tex);
-		printf("ceiling tex: [%s]\n", map->ceiling_tex);
 		error_handling(NO_INFO, mlx);
-	}
 }
 
 /*
@@ -62,7 +49,7 @@ char	**make_rectangle(t_data *mlx)
 			if (extended_line == NULL)
 				return (NULL);
 			ft_memcpy(extended_line, mlx->map.map[y], old_len);
-			ft_memset(extended_line + old_len, '0', mlx->map.size.x - old_len);
+			ft_memset(extended_line + old_len, ' ', mlx->map.size.x - old_len);
 			extended_line[mlx->map.size.x] = '\0';
 			free(mlx->map.map[y]);
 			mlx->map.map[y] = extended_line;
@@ -100,18 +87,16 @@ char	**add_line_to_map(char **old_map, char *new_line, int y)
 }
 
 /*
-**		Erases the spaces from the given map line. Locates player position.
+**		Locates player position.
 */
 
-char	*replace_spaces(t_data *mlx, char *str)
+char	*find_player_pos(t_data *mlx, char *str)
 {
 	int		i;
 
 	i = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] == ' ')
-			str[i] = '0';
 		if (ft_strchr_i("NSEW", str[i]) == 1)
 			mlx->map.player.x = i;
 		i++;
@@ -133,7 +118,7 @@ void	map_information(t_data *mlx, char *line)
 	element_validation(mlx);
 	if (mlx->map.check == 0)
 		mlx->map.check = 1;
-	new_line = ft_strdup(replace_spaces(mlx, line));
+	new_line = ft_strdup(find_player_pos(mlx, line));
 	if (new_line == NULL || mlx->map.check == 2)
 	{
 		if (new_line != NULL)

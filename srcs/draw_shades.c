@@ -21,8 +21,8 @@ int		add_shades(int rgb, double distance)
 	shade = (8.0 / distance) / 3.0;
 	if (shade > 1)
 		shade = 1;
-	if (shade < 0.33)
-		shade = 0.33;
+	if (shade < 0.3)
+		shade = 0.3;
 	rgb = (((int)((0xFF & rgb >> 16) * shade) << 16) +
 			((int)((0xFF & rgb >> 8) * shade) << 8) +
 			((int)(0xFF & rgb) * shade));

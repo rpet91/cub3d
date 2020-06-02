@@ -53,39 +53,53 @@ int			floor_rgb(t_data *mlx, int color, t_texture *tex, int y)
 	return (add_shades(rgb, mlx->map.res.y / (y / 2.0)));
 }
 
-void		draw_floors(t_data *mlx, t_image *cur_img)
+void		calculate_ray_size(t_data *mlx)
 {
-	int		rgb;
-	int		y;
-	int		x;
-	t_floor	*floor;
-	t_ray	*ray;
+	t_floor		*floor;
+	t_ray		*ray;
 
-	ray = &mlx->ray;
 	floor = &mlx->floor;
-	if (mlx->map.ceiling_rgb != -2 && mlx->map.floor_rgb != -2)
-		return (draw_solid_floors(mlx, cur_img));
+	ray = &mlx->ray;
 	floor->ray1.x = ray->dir.x - ray->plane.x;
 	floor->ray1.y = ray->dir.y - ray->plane.y;
 	floor->ray2.x = ray->dir.x + ray->plane.x;
 	floor->ray2.y = ray->dir.y + ray->plane.y;
+}
+
+void		draw_texture_pixel(t_data *mlx, t_image *cur_img, int y)
+{
+	int		rgb;
+	int		x;
+
+	x = 0;
+	while (x < mlx->map.res.x)
+	{
+		mlx->floor.cell.x = (int)mlx->floor.pos.x;
+		mlx->floor.cell.y = (int)mlx->floor.pos.y;
+		mlx->floor.pos.x += mlx->floor.step.x;
+		mlx->floor.pos.y += mlx->floor.step.y;
+		rgb = floor_rgb(mlx, mlx->map.ceiling_rgb, &mlx->list_tex.ceiling, y);
+		put_pixel(cur_img, x, mlx->map.res.y - y - 1, rgb);
+		rgb = floor_rgb(mlx, mlx->map.floor_rgb, &mlx->list_tex.floor, y);
+		put_pixel(cur_img, x, y, rgb);
+		x++;
+	}
+}
+
+void		draw_floors(t_data *mlx, t_image *cur_img)
+{
+	int		y;
+	t_floor	*floor;
+
+	floor = &mlx->floor;
+	if (mlx->map.ceiling_rgb != -2 && mlx->map.floor_rgb != -2)
+		return (draw_solid_floors(mlx, cur_img));
+	calculate_ray_size(mlx);
 	y = mlx->map.res.y - 1;
 	while (y > mlx->map.res.y / 2 - 1)
 	{
 		floors_raycast(mlx, y);
-		x = 0;
-		while (x < mlx->map.res.x)
-		{
-			mlx->floor.cell.x = (int)mlx->floor.pos.x;
-			mlx->floor.cell.y = (int)mlx->floor.pos.y;
-			mlx->floor.pos.x += mlx->floor.step.x;
-			mlx->floor.pos.y += mlx->floor.step.y;
-			rgb = floor_rgb(mlx, mlx->map.ceiling_rgb, &mlx->list_tex.ceiling, y);
-			put_pixel(cur_img, x, mlx->map.res.y - y - 1, rgb);
-			rgb = floor_rgb(mlx, mlx->map.floor_rgb, &mlx->list_tex.floor, y);
-			put_pixel(cur_img, x, y, rgb);
-			x++;
-		}
+		draw_texture_pixel(mlx, cur_img, y);
 		y--;
 	}
 }

@@ -48,12 +48,13 @@ void	screenshot_frame_loop(t_data *mlx)
 {
 	int		x;
 
+	draw_floors(mlx, &mlx->img1);
 	x = 0;
 	while (x < mlx->map.res.x)
 	{
 		calculate_variables(mlx, x);
 		calculate_texture(mlx);
-		draw_floors(mlx, &mlx->img1);
+		draw_wall_texture(mlx, x, &mlx->img1);
 		x++;
 	}
 	sprite_engine(mlx, &mlx->img1);

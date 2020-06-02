@@ -20,11 +20,11 @@
 
 t_texture	*get_wall_texture(t_data *mlx)
 {
-	if (mlx->ray.side_hit == 0)
+	if (mlx->ray.side_hit == 1)
 		return (&mlx->list_tex.north);
-	else if (mlx->ray.side_hit == 2)
+	else if (mlx->ray.side_hit == 3)
 		return (&mlx->list_tex.south);
-	else if (mlx->ray.side_hit == 1)
+	else if (mlx->ray.side_hit == 0)
 		return (&mlx->list_tex.west);
 	else
 		return (&mlx->list_tex.east);

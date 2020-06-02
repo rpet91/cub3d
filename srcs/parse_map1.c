@@ -113,12 +113,13 @@ void	parse_map(t_data *mlx, char *str)
 {
 	int		ret;
 
+	empty_textures(mlx);
 	empty_map(mlx);
 	if (ft_strcmp(str + ft_strlen(str) - 4, ".cub") != 0)
 		error_handling(NO_CUB, mlx);
 	mlx->map.fd = open(str, O_RDONLY);
 	if (mlx->map.fd == -1)
-		error_handling(NO_CUB, mlx);
+		error_handling(INVALID_CUB, mlx);
 	ret = 1;
 	while (ret == 1)
 		ret = read_cub_file(mlx, mlx->map.fd);
